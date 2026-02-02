@@ -1,0 +1,185 @@
+/* Modified manager.css */
+.review-stats-wrapper { margin-top: 16px; }
+.flag-btn { background:#f4f6ff; border:1px solid #e6e9ff; }
+
+/* ========== Pronunciation flag badge (smaller & lighter) ========== */
+
+.pron-flag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 32px;
+	height: 28px;
+	padding: 6px 12px;
+	margin-right: 8px;
+	border-radius: 12px;
+	background: #F4F6FA;
+	border: 1px solid rgba(0,0,0,0.06);
+	box-shadow: none;
+	font-size: 15px;
+	line-height: 1;
+	transition: all 0.2s ease;
+}
+.pron-flag:last-child { margin-right: 0; }
+.pron-flag:hover {
+	background: #E3EAF6;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+.pron-flag-wrap {
+	display: inline-flex;
+	flex-direction: row;
+	gap: 8px;
+}
+
+/* ========== Review stat cards: mini bar chart ========== */
+.review-compare {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 14px;
+	margin-top: 8px;
+}
+
+.review-compare .numbers {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.review-compare .numbers .main {
+	font-size: 18px;
+	font-weight: 800;
+}
+
+.review-compare .numbers .sub {
+	font-size: 12px;
+	opacity: 0.75;
+}
+
+.mini-bars {
+	display: flex;
+	align-items: flex-end;
+	gap: 8px;
+	height: 34px;
+	width: 56px;
+}
+
+.mini-bars .bar {
+	width: 20px;
+	border-radius: 8px;
+	background: rgba(255,255,255,0.55);
+	border: 1px solid rgba(0,0,0,0.05);
+}
+
+.mini-bars .bar.current {
+	background: rgba(255,255,255,0.85);
+}
+
+.mini-bars .bar.prev {
+	background: rgba(255,255,255,0.45);
+}
+
+/* ========== Progress bar: make it look like a component, not a divider ========== */
+.progress-card {
+	border-radius: 16px;
+	background: rgba(255,255,255,0.14);
+	border: 1px solid rgba(255,255,255,0.18);
+	padding: 12px 14px;
+	backdrop-filter: blur(8px);
+}
+
+.progress-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 10px;
+}
+
+.progress-row .label {
+	font-size: 14px;
+	opacity: 0.92;
+	font-weight: 700;
+}
+
+.progress-row .pct {
+	font-size: 13px;
+	opacity: 0.9;
+	font-weight: 700;
+}
+
+.progress-track {
+	height: 12px;
+	border-radius: 999px;
+	background: rgba(255,255,255,0.22);
+	overflow: hidden;
+	border: 1px solid rgba(0,0,0,0.06);
+}
+
+.progress-fill {
+	height: 100%;
+	border-radius: 999px;
+	background: rgba(255,255,255,0.85);
+	box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+	width: 0%;
+	transition: width 220ms ease;
+}
+
+/* ===== Gamified Dashboard ===== */
+#dashboard{margin-top:14px;display:block}
+#dashboard .dash-wrap{display:flex;flex-direction:column;gap:12px}
+#dashboard .dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+#dashboard .dash-card{
+  background:rgba(255,255,255,0.65);
+  border-radius:16px;
+  padding:12px 14px;
+  border:1px solid rgba(255,255,255,0.45);
+  box-shadow:0 10px 26px rgba(0,0,0,0.12), 0 0 22px rgba(124,58,237,0.10);
+  backdrop-filter:blur(10px);
+  transition:transform .18s ease, box-shadow .18s ease;
+  position:relative;
+  overflow:hidden;
+  cursor:pointer;
+}
+#dashboard .dash-card:hover{transform:translateY(-2px);box-shadow:0 18px 36px rgba(0,0,0,0.16), 0 0 30px rgba(99,102,241,0.18)}
+#dashboard .dash-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#dashboard .dash-kpi{font-size:20px;font-weight:900;margin-top:6px}
+#dashboard .dash-title{font-weight:900;font-size:13px;opacity:.9;letter-spacing:.2px}
+#dashboard .dash-sub{font-size:12px;opacity:.8}
+#dashboard .dash-badges{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+#dashboard .dash-badge{font-size:11px;font-weight:900;border-radius:999px;padding:4px 8px;border:1px solid rgba(0,0,0,0.06);background:#fff;color:#334155}
+#dashboard .dash-badge.is-gold{background:linear-gradient(135deg,#fde68a,#fbbf24);border-color:rgba(202,138,4,.45);color:#7a4a00;box-shadow:0 4px 12px rgba(251,191,36,.35)}
+#dashboard .dash-badge.is-silver{background:linear-gradient(135deg,#e5e7eb,#cbd5e1);border-color:rgba(148,163,184,.55);color:#475569}
+#dashboard .dash-badge.is-bronze{background:linear-gradient(135deg,#fcd9b6,#d97706);border-color:rgba(180,83,9,.45);color:#6b3b00}
+#dashboard .dash-bar{height:10px;border-radius:999px;background:rgba(15,23,42,.10);overflow:hidden;border:1px solid rgba(15,23,42,.08);margin-top:8px}
+#dashboard .dash-bar-fill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,#60a5fa,#7c3aed)}
+#dashboard .dash-stack{display:flex;height:10px;border-radius:999px;overflow:hidden;background:rgba(15,23,42,.10);border:1px solid rgba(15,23,42,.08);margin-top:8px}
+#dashboard .dash-stack-red{background:#f87171;width:0%}
+#dashboard .dash-stack-yellow{background:#f59e0b;width:0%}
+#dashboard .dash-stack-green{background:#22c55e;width:0%}
+#dashboard .dash-compare-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px}
+#dashboard .dash-compare-kpi{display:flex;flex-direction:column;gap:2px}
+#dashboard .dash-compare-kpi .big{font-size:20px;font-weight:900}
+#dashboard .dash-compare-kpi .muted{font-size:12px;opacity:.75}
+#dashboard .dash-delta{font-size:12px;font-weight:900;opacity:.85}
+#dashboard .dash-btn{
+  margin-top:8px;
+  border:0;border-radius:999px;padding:10px 14px;font-weight:900;cursor:pointer;
+  background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;box-shadow:0 10px 20px rgba(79,70,229,.25)
+}
+#dashboard .celebrate{animation:dashCelebrate 1s ease}
+@keyframes dashCelebrate{
+  0%{transform:scale(1);box-shadow:0 10px 26px rgba(0,0,0,0.12), 0 0 22px rgba(124,58,237,0.10)}
+  40%{transform:scale(1.03);box-shadow:0 18px 40px rgba(0,0,0,0.18), 0 0 36px rgba(124,58,237,0.22)}
+  100%{transform:scale(1);box-shadow:0 10px 26px rgba(0,0,0,0.12), 0 0 22px rgba(124,58,237,0.10)}
+}
+
+/* Hide legacy top stats to avoid duplicate dashboard */
+.hero .progressRow,
+.hero #reviewMini,
+.hero #badgeRow{ display:none !important; }
+
+/* Mini compare cards occupy full width on small screens */
+@media(max-width:980px){
+  #dashboard .dash-grid{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+}

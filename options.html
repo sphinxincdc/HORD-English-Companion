@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>全能英语单词本PRO - 设置（BYOK）</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body{margin:0;background:#0b1220;color:#e5e7eb;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
+    .wrap{max-width:980px;margin:0 auto;padding:18px 14px 40px;}
+    .hd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);border-radius:18px;padding:16px 16px}
+    .hd h1{margin:0;font-size:20px;font-weight:900}
+    .hd p{margin:8px 0 0;color:rgba(229,231,235,.72);line-height:1.5}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+    .card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);border-radius:18px;padding:14px}
+    .card h2{margin:0 0 10px;font-size:15px;font-weight:900}
+    .row{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+    label{font-size:12px;color:rgba(229,231,235,.72)}
+    input{border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.25);color:#fff;padding:10px 12px;font-size:13px;outline:none}
+    .actions{display:flex;gap:10px;margin-top:12px;align-items:center}
+    .btn{border:0;border-radius:14px;padding:10px 12px;font-weight:900;cursor:pointer;background:#fff;color:#111827}
+    .btn.secondary{background:rgba(255,255,255,.10);color:#e5e7eb;border:1px solid rgba(255,255,255,.14)}
+    .btn.mini{padding:6px 10px;font-size:12px;border-radius:999px}
+    .status{font-size:12px;color:rgba(229,231,235,.75)}
+    .note{font-size:12px;color:rgba(229,231,235,.65);line-height:1.45}
+    @media(max-width:860px){.grid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hd">
+      <h1>设置（BYOK - Bring Your Own Key）</h1>
+      <p>
+        这里放所有 API Key。<b>Key 可留空</b>：会走免费/无 Key 的 fallback（例如：Google 翻译/公开词典入口）。
+        <br/>接口失败会“静默降级”（不显示结果即可），不会阻塞划词弹窗与单词本功能。
+      </p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>授权（可选）</h2>
+        <div class="row">
+          <label for="licenseCode">License Code（填了就视为 Pro）</label>
+          <input id="licenseCode" placeholder="例如：XXXX-XXXX-XXXX" />
+        </div>
+        <div class="note">未填：默认 free（有上限）。</div>
+      </div>
+
+      <div class="card">
+        <h2>Azure Translator（优先） <button class="btn secondary mini" data-test-provider="azure">测试</button></h2>
+        <div class="row">
+          <label for="azureKey">Key</label>
+          <input id="azureKey" placeholder="Azure Translator Key（可留空）" />
+        </div>
+        <div class="row">
+          <label for="azureRegion">Region</label>
+          <input id="azureRegion" placeholder="例如：eastasia（可留空）" />
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>腾讯翻译（可选） <button class="btn secondary mini" data-test-provider="tencent">测试</button></h2>
+        <div class="row">
+          <label for="tencentId">SecretId</label>
+          <input id="tencentId" placeholder="可留空" />
+        </div>
+        <div class="row">
+          <label for="tencentKey">SecretKey</label>
+          <input id="tencentKey" placeholder="可留空" />
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>阿里云翻译（可选） <button class="btn secondary mini" data-test-provider="aliyun">测试</button></h2>
+        <div class="row">
+          <label for="aliyunId">AccessKeyId</label>
+          <input id="aliyunId" placeholder="可留空" />
+        </div>
+        <div class="row">
+          <label for="aliyunKey">AccessKeySecret</label>
+          <input id="aliyunKey" placeholder="可留空" />
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>彩云小译（可选） <button class="btn secondary mini" data-test-provider="caiyun">测试</button></h2>
+        <div class="row">
+          <label for="caiyunToken">Token</label>
+          <input id="caiyunToken" placeholder="可留空" />
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>有道（可选） <button class="btn secondary mini" data-test-provider="youdao">测试</button></h2>
+        <div class="row">
+          <label for="youdaoAppKey">AppKey</label>
+          <input id="youdaoAppKey" placeholder="可留空" />
+        </div>
+        <div class="row">
+          <label for="youdaoAppSecret">AppSecret</label>
+          <input id="youdaoAppSecret" placeholder="可留空" />
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="save" class="btn">保存</button>
+      <button id="openManager" class="btn secondary">管理单词本</button>
+      <button id="openReview" class="btn secondary">艾宾浩斯测试</button>
+      <span id="status" class="status"></span>
+    </div>
+
+    <div class="note" style="margin-top:10px">
+      当前版本只做“配置收口 + 降级策略”。后续你接入具体供应商接口时，建议按优先级：Azure → 腾讯 → 阿里 → 彩云 → 免费 fallback。
+    </div>
+  </div>
+  <script src="options.js"></script>
+</body>
+</html>

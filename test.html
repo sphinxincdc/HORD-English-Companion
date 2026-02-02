@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html class="test-body">
+<head>
+  <meta charset="utf-8">
+  <title>艾宾浩斯大师复习</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="test-window">
+    <div class="test-header" style="padding:25px 30px; border-bottom:1px solid #f5f5f5; display:flex; justify-content:space-between; align-items:center;">
+      <span id="test-idx" style="font-weight: bold; color: #888; font-size: 14px;">1 / 20</span>
+      <div style="flex:1; margin: 0 20px; height:8px; background:#eee; border-radius:4px; overflow:hidden;"><div id="test-progress-fill" style="height:100%; background:var(--primary); width:0%; transition:0.4s;"></div></div>
+      <button id="test-close" style="background:none; border:none; color:var(--red); cursor:pointer; font-weight:bold; font-size: 14px;">✕ 结束复习</button>
+    </div>
+
+    <div class="test-config" style="padding:18px 30px; border-bottom:1px solid #f5f5f5; display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="color:#666; font-weight:600;">本次复习数量</span>
+        <input id="cfg-limit" type="number" min="1" max="200" value="20"
+          style="width:90px; padding:10px 12px; border-radius:12px; border:1px solid #e6e6e6; background:#fff; outline:none;">
+      </div>
+
+      <div style="display:flex; align-items:center; gap:10px; margin-left:6px;">
+        <span style="color:#666; font-weight:600;">测试对象</span>
+        <label style="display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; border:1px solid #e6e6e6; background:#fff; cursor:pointer;">
+          <input id="cfg-red" type="checkbox" checked>
+          <span style="color:#555;">陌生</span>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; border:1px solid #e6e6e6; background:#fff; cursor:pointer;">
+          <input id="cfg-yellow" type="checkbox" checked>
+          <span style="color:#555;">学习中</span>
+        </label>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:10px; margin-left:6px;">
+        <span style="color:#666; font-weight:600;">答案显示</span>
+        <label style="display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; border:1px solid #e6e6e6; background:#fff; cursor:pointer;">
+          <input id="cfg-display-cn" type="checkbox" checked>
+          <span style="color:#555;">中文释义</span>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; border:1px solid #e6e6e6; background:#fff; cursor:pointer;">
+          <input id="cfg-display-en" type="checkbox" checked>
+          <span style="color:#555;">英文释义</span>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; border:1px solid #e6e6e6; background:#fff; cursor:pointer;">
+          <input id="cfg-display-note" type="checkbox" checked>
+          <span style="color:#555;">批注</span>
+        </label>
+      </div>
+
+      <div style="flex:1;"></div>
+
+      <button id="cfg-apply" class="primary-btn" style="padding:10px 16px; border-radius:14px; border:none; background:var(--primary); color:#fff; font-weight:700; cursor:pointer;">
+        应用并开始
+      </button>
+    </div>
+    <div class="test-card-area" style="flex:1; perspective:1200px; padding:40px; position:relative;">
+      <div id="test-card-inner" style="width:100%; height:100%; position:relative; transition:transform 0.6s; transform-style:preserve-3d; cursor:pointer;">
+        <div class="test-card-face">
+          <div id="test-cloze-container" style="font-size: 20px; line-height: 1.6; color:#444; font-style:italic; margin-bottom: 20px;"></div>
+          <h1 id="test-q-word" style="font-size: 48px; margin: 0; color:#222; word-break: break-all;">Word</h1>
+          <p style="color:#bbb; font-size:13px; margin-top:40px;">点击卡片或按空格查看答案</p>
+        </div>
+        <div class="test-card-face" style="transform:rotateY(180deg); align-items:flex-start; justify-content:flex-start; text-align:left; overflow-y:auto;">
+          <div id="test-ans-word" style="font-size: 32px; font-weight: 800; margin-bottom: 5px; color:#000;">Word</div>
+          <div id="test-ans-ph" style="color:var(--primary); font-weight:bold; margin-bottom:20px; font-size: 17px;"></div>
+          <div style="width:100%; height:1px; background:#f0f0f0; margin-bottom:20px;"></div>
+          <div id="test-ans-def" style="font-size:17px; line-height:1.7; color:#333;"></div>
+          <div id="test-ans-note" class="word-note-purple" style="display:none; margin-top:20px; width:100%; box-sizing: border-box;"></div>
+        </div>
+      </div>
+    </div>
+    <div id="test-srs-controls" style="display:none; gap:15px; padding:25px 35px; background:#fdfdfd; border-top:1px solid #f0f0f0;">
+      <button class="test-rate-btn" style="background:#ff5252; flex:1; height:60px; border:none; border-radius:18px; color:#fff; font-weight:bold; cursor:pointer;" data-q="0">忘了</button>
+      <button class="test-rate-btn" style="background:#ff9800; flex:1; height:60px; border:none; border-radius:18px; color:#fff; font-weight:bold; cursor:pointer;" data-q="3">模糊</button>
+      <button class="test-rate-btn" style="background:#4caf50; flex:1; height:60px; border:none; border-radius:18px; color:#fff; font-weight:bold; cursor:pointer;" data-q="5">秒杀</button>
+    </div>
+    <div id="test-finish-overlay" style="position: absolute; inset: 0; background: #fff; z-index: 100; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+      <div style="font-size: 80px; margin-bottom: 20px;">🏆</div>
+      <h2 style="font-size: 28px; color:#222;">复习任务已达标</h2>
+      <div id="test-score" style="margin-top:12px; font-size:36px; font-weight:900; color:#3c2f8f;">0 分</div>
+      <div id="test-summary" style="margin-top:6px; font-size:14px; color:#666;">—</div>
+      <div id="test-encourage" style="margin-top:10px; font-size:16px; font-weight:700; color:#222;">继续加油！</div>
+      <button id="test-back-mgr" style="margin-top:30px; padding:18px 60px; background:var(--primary); color:#fff; border:none; border-radius:20px; font-weight:bold; cursor:pointer; font-size:16px;">返回单词本</button>
+    </div>
+  </div>
+  <script src="test.js"></script>
+</body>
+</html>

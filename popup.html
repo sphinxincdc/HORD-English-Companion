@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>全能英语单词本PRO</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Brighter, closer to the in-page word popup (light, clean, high-contrast) */
+    body{width:360px;margin:0;
+      background:radial-gradient(1200px 420px at 10% -10%, rgba(79,70,229,.25), transparent 60%),
+                 radial-gradient(900px 380px at 110% 0%, rgba(34,197,94,.18), transparent 55%),
+                 linear-gradient(180deg,#f8fafc,#eef2ff);
+      color:#0f172a;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Segoe UI Emoji","Segoe UI Symbol","Apple Color Emoji","Noto Color Emoji";
+      max-height:640px;overflow:auto;}
+    .wrap{padding:14px 14px 16px;}
+
+    .brand{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
+    .brandLeft{display:flex;flex-direction:column;gap:2px}
+    .brand .name{font-weight:900;font-size:16px;letter-spacing:.2px}
+    .brand .subtitle{font-size:11px;color:rgba(15,23,42,.55)}
+    .brandRight{display:flex;align-items:flex-start;gap:8px}
+    .gearBtn{border:1px solid rgba(15,23,42,.10);background:rgba(255,255,255,.85);width:28px;height:28px;border-radius:10px;cursor:pointer;font-size:14px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+    .gearBtn:active{transform:translateY(1px)}
+    .ver{font-size:10px;color:rgba(15,23,42,.38)}
+
+    .card{background:rgba(255,255,255,.80);border:1px solid rgba(15,23,42,.10);border-radius:18px;padding:12px;margin-top:10px;
+      box-shadow:0 10px 30px rgba(15,23,42,.12);
+      backdrop-filter: blur(6px);
+    }
+    .row{display:flex;gap:8px;align-items:center}
+    .actionRow{gap:10px}
+    .actionBtn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+
+    .input{flex:1;border-radius:14px;border:1px solid rgba(15,23,42,.12);background:rgba(255,255,255,.90);color:#0f172a;padding:10px 12px;font-size:13px;outline:none}
+    .input::placeholder{color:rgba(15,23,42,.45)}
+
+    .btn{border:0;border-radius:14px;padding:10px 12px;font-weight:900;cursor:pointer;background:#fff;color:#0f172a;border:1px solid rgba(15,23,42,.10)}
+    .btn.secondary{background:linear-gradient(180deg, rgba(79,70,229,.10), rgba(79,70,229,.06));color:#1e293b;border:1px solid rgba(79,70,229,.18)}
+    .btn.primary{background:linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);color:#fff;border:1px solid rgba(79,70,229,.30);box-shadow:0 10px 18px rgba(79,70,229,.22)}
+    .btn.big{padding:12px 12px;font-weight:900;font-size:13px;border-radius:14px;}
+    .btn:active{transform:translateY(1px)}
+    .btn[disabled]{opacity:.55;cursor:not-allowed}
+
+    .hint{font-size:12px;color:rgba(15,23,42,.62);margin-top:8px;line-height:1.35}
+    .result{white-space:pre-wrap;font-size:13px;line-height:1.45;color:#0f172a}
+    .result .muted{color:rgba(15,23,42,.62);font-size:12px}
+
+    /* toggles */
+    .toggles{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+    .toggleRow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 10px;border-radius:14px;background:rgba(255,255,255,.70);border:1px solid rgba(15,23,42,.10)}
+    .toggleRow[data-on="1"]{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.10)}
+    .toggleRow .label{font-size:13px;font-weight:850}
+    .toggleRow .sub{font-size:11px;color:rgba(15,23,42,.55);margin-top:2px;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+    .sw{position:relative;width:44px;height:26px;flex:0 0 auto}
+    .sw input{position:absolute;opacity:0;width:0;height:0}
+    .track{position:absolute;inset:0;border-radius:999px;background:rgba(15,23,42,.10);border:1px solid rgba(15,23,42,.12);transition:.15s}
+    .knob{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:999px;background:#fff;transition:.15s}
+    .sw input:checked + .track{background:rgba(34,197,94,.35);border-color:rgba(34,197,94,.45)}
+    .sw input:checked + .track .knob{transform:translateX(18px)}
+
+    .links{display:grid;grid-template-columns:1fr;gap:10px;}
+    .toolCard{background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:16px;padding:12px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 8px 18px rgba(15,23,42,.10);cursor:pointer}
+    .toolText{display:flex;flex-direction:column;gap:2px}
+    .toolTitle{font-size:13px;font-weight:900}
+    .toolDesc{font-size:11px;color:rgba(15,23,42,.55)}
+    .toolArrow{font-size:14px;color:rgba(15,23,42,.45)}
+
+    .sysCard{background:rgba(248,250,252,.90);border:1px solid rgba(15,23,42,.08)}
+    .sysHead{font-size:12px;font-weight:900;color:rgba(15,23,42,.70);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+    .toggleRow.danger .label{color:#dc2626}
+    .toggleRow.danger .sub{color:rgba(220,38,38,.70)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">
+      <div class="brandLeft">
+        <div class="name">全能英语单词本 PRO</div>
+        <div class="subtitle">Vocabulary Efficiency Tool</div>
+      </div>
+      <div class="brandRight">
+        <button id="openOptions" class="gearBtn" title="设置">⚙</button>
+        <div id="ver" class="ver">Version</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <input id="q" class="input" placeholder="输入单词或句子…" />
+      </div>
+
+      <div class="row actionRow" style="margin-top:10px">
+        <button id="btnAdd" class="btn primary actionBtn">➕ 添加生词</button>
+        <button id="btnTranslate" class="btn secondary actionBtn">⚡ 立即翻译</button>
+      </div>
+
+      <div id="err" class="hint" style="display:none;color:#fca5a5;margin-top:10px"></div>
+      <div id="out" class="result" style="display:none;margin-top:10px"></div>
+    </div>
+
+    <div class="card">
+      <div class="links">
+        <div id="openManager" class="toolCard">
+          <div class="toolText">
+            <div class="toolTitle">📚 管理单词本</div>
+            <div class="toolDesc">查看、编辑、排序你的单词</div>
+          </div>
+          <div class="toolArrow">→</div>
+        </div>
+        <div id="openReview" class="toolCard">
+          <div class="toolText">
+            <div class="toolTitle">🧠 艾宾浩斯复习</div>
+            <div class="toolDesc">开始今日复习与记忆巩固</div>
+          </div>
+          <div class="toolArrow">→</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- switches at the very bottom (highest discoverability, no overlap with translation output) -->
+    <div class="card sysCard">
+      <div class="sysHead">⚙ 插件控制</div>
+      <div class="toggles" style="margin-top:0">
+        <div class="toggleRow" id="rowPage" data-on="0">
+          <div>
+            <div class="label">不在此网页使用</div>
+            <div class="sub" id="pageLabel">当前页</div>
+          </div>
+          <label class="sw">
+            <input id="swPage" type="checkbox" />
+            <span class="track"><span class="knob"></span></span>
+          </label>
+        </div>
+
+        <div class="toggleRow" id="rowDomain" data-on="0">
+          <div>
+            <div class="label">不在此域名使用</div>
+            <div class="sub" id="domainLabel">当前域名</div>
+          </div>
+          <label class="sw">
+            <input id="swDomain" type="checkbox" />
+            <span class="track"><span class="knob"></span></span>
+          </label>
+        </div>
+
+        <div class="toggleRow danger" id="rowGlobal" data-on="0">
+          <div>
+            <div class="label">完全关闭插件</div>
+            <div class="sub">所有网页都停用（可随时再开）</div>
+          </div>
+          <label class="sw">
+            <input id="swGlobal" type="checkbox" />
+            <span class="track"><span class="knob"></span></span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

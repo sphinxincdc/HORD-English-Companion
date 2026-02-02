@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>全能英语单词本PRO</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="manager.css" />
+  <style>
+    body{margin:0;background:#f5f7fb;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
+    .hero{position:relative;
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
+      color:#fff;padding:22px 18px 18px;
+    }
+    .hero h1{margin:0;font-size:42px;font-weight:900;letter-spacing:0.2px;line-height:1.1;text-align:center}
+    .titleWrap{display:flex;align-items:center;justify-content:center;gap:16px}
+    .appLogo{width:82px;height:82px;border-radius:18px;object-fit:cover;display:inline-block;background:#6d28d9;padding:8px;box-sizing:border-box;box-shadow:0 14px 28px rgba(0,0,0,.22)}
+    .titleText{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+    .titleLine{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+    .titleText .sub{font-size:15px;font-weight:900;opacity:.95;line-height:1}
+    .verInline{font-size:14px;font-weight:900;opacity:.9}
+    .tagline{font-size:18px;font-weight:800;letter-spacing:.3px;opacity:.98;color:#facc15;font-family:"Segoe Script","Lucida Handwriting","Trebuchet MS","KaiTi","STKaiti",cursive}
+    @media (max-width:560px){.appLogo{width:58px;height:58px;border-radius:12px}.hero h1{font-size:34px}.tagline{font-size:14px}}
+    .hero .meta{margin-top:8px;opacity:.95;font-size:12px;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;line-height:1.5;max-width:100%}
+    .hero .meta span{max-width:100%;word-break:break-word}
+    .hero .progressRow{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .hero .progress{flex:1;min-width:220px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);border-radius:999px;overflow:hidden;height:12px}
+    .hero .progress > div{height:100%;width:0%;background:rgba(255,255,255,.92)}
+    .hero .badgeRow{display:flex;gap:8px;flex-wrap:wrap}
+    .hero .badge{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.14);color:#fff;border-radius:999px;padding:6px 10px;font-weight:900;font-size:12px}
+    .hero .meta .break{flex-basis:100%;height:0;}
+    .hero .meta span{display:inline-flex;align-items:center;gap:6px}
+    .tabsBar{margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .tabs{display:flex;gap:10px}
+    .tab{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;border-radius:999px;padding:8px 12px;font-weight:800;cursor:pointer}
+    .tab.active{background:#fff;color:#111;border-color:#fff}
+    .reviewBtn{margin-left:auto;border:0;border-radius:999px;padding:10px 14px;font-weight:1000;cursor:pointer;background:rgba(255,255,255,.92);color:#111;display:inline-flex;align-items:center;gap:8px;box-shadow:0 10px 24px rgba(0,0,0,.18)}
+    .reviewBtn:hover{transform:translateY(-1px)}
+    .container{max-width:1200px;margin:0 auto;padding:14px 14px 40px;}
+    .cards{display:grid;grid-template-columns:repeat(6,minmax(120px,1fr));gap:14px;margin-top:16px}
+    @media (max-width: 980px){ .cards{grid-template-columns:repeat(2,minmax(0,1fr));} }
+    .card{background:rgba(255,255,255,.92);border-radius:18px;padding:4px 10px 4px 16px;box-shadow:0 10px 30px rgba(0,0,0,.12);min-height:22px;display:flex;flex-direction:column;gap:3px}
+    .card h3{margin-left:10px;}
+.card--red{background:rgba(255,80,80,.18)}
+.card--orange{background:rgba(255,170,0,.18)}
+.card--green{background:rgba(0,200,120,.18)}
+.card--purple{background:rgba(170,90,255,.18)}
+.card--indigo{background:rgba(90,120,255,.18)}
+.card--sky{background:rgba(80,170,255,.20)}
+.card--amber{background:rgba(255,210,0,.18)}
+
+    .card .label{color:#6b7280;font-size:9px;font-weight:800}
+    .card .value{margin-top:1px;font-size:15px;font-weight:900}
+    .card .bar{display:none}
+    .card .bar > div{height:100%;width:0%}
+    .toolbar{margin-top:14px;background:#fff;border-radius:16px;padding:12px;box-shadow:0 10px 28px rgba(0,0,0,.06);display:flex;gap:10px;align-items:center;flex-wrap:wrap;position:sticky;top:10px;z-index:10}
+    .toolbar-right{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .input{border:1px solid #e5e7eb;border-radius:12px;padding:10px 12px;background:#fff;min-width:220px}
+    .searchInput{min-width:28px;width:28px;max-width:44px;text-align:center}
+    .searchInput::placeholder{text-align:center}
+    .select{border:1px solid #e5e7eb;border-radius:12px;padding:10px 12px;background:#fff}
+    .btn{border:0;border-radius:12px;padding:10px 12px;font-weight:900;cursor:pointer}
+    .btn.primary{background:#4f46e5;color:#fff}
+    .btn.danger{background:#ef4444;color:#fff}
+    .btn.danger-light{background:#fecaca;color:#991b1b}
+    .btn.danger-deep{background:#b91c1c;color:#fff}
+    .btn.ghost{background:#f3f4f6;color:#111}
+    .btn.green{background:#22c55e;color:#fff}
+    .btn.yellow{background:#f59e0b;color:#111}
+    .btn.purple{background:#7c3aed;color:#fff}
+    .btn.dark{background:#111827;color:#fff}
+    .tableWrap{margin-top:12px;background:#fff;border-radius:16px;box-shadow:0 10px 28px rgba(0,0,0,.06);overflow:hidden}
+    table{width:100%;border-collapse:separate;border-spacing:0}
+    thead th{position:sticky;top:0;background:#fafafa;border-bottom:1px solid #eee;padding:12px 10px;font-size:12px;text-align:left;color:#6b7280}
+    tbody td{border-bottom:1px solid #f1f1f1;padding:12px 10px;vertical-align:top}
+    tbody tr:hover{background:#fcfcff}
+    .word{font-size:18px;font-weight:900}
+    .muted{color:#6b7280;font-size:12px}
+    .phon{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid #e5e7eb;border-radius:999px;padding:6px 10px;font-weight:800;font-size:12px;background:#fff}
+    .speak{border:0;background:#111827;color:#fff;border-radius:10px;padding:6px 8px;cursor:pointer;font-weight:900}
+    .statusBtn{min-width:100px}
+    .noteTag{display:inline-flex;align-items:center;gap:6px;background:#f3e8ff;color:#6b21a8;border-radius:999px;padding:5px 10px;font-weight:900;font-size:12px}
+    .noteText{color:#7c3aed;font-weight:800;white-space:pre-wrap}
+    /* NOTE: avoid flex on table cells/headers (can create phantom right whitespace in fixed-layout tables) */
+    .right{text-align:right}
+    .empty{padding:28px;text-align:center;color:#6b7280}
+    .sectionTitle{margin-top:16px;margin-bottom:8px;font-weight:900;color:#111827}
+    .hintBox{margin-top:10px;background:#f8fafc;border:1px dashed #e5e7eb;border-radius:14px;padding:12px;color:#475569;font-size:12px;line-height:1.5}
+    .modalMask{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:999999}
+    .modal{width:min(760px,92vw);background:#fff;border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.25);overflow:hidden}
+    .modalHd{padding:14px 16px;background:#111827;color:#fff;font-weight:900;display:flex;justify-content:space-between;align-items:center}
+    .modalBd{padding:14px 16px}
+    .modalFt{padding:12px 16px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid #eee}
+    textarea{width:100%;min-height:220px;border:1px solid #e5e7eb;border-radius:14px;padding:12px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,"Liberation Mono","Courier New",monospace;font-size:12px}
+    .small{font-size:12px;color:#6b7280}
+  
+  /* checkbox */
+  input[type="checkbox"]{ width:18px; height:18px; cursor:pointer; }
+  td:first-child, th:first-child{ width:44px; text-align:center; }
+  /* Table layout: fixed columns, no sticky (avoids right-side blank gap) */
+  /* No horizontal overflow/phantom blank area */
+  .tableWrap{overflow-x:hidden;}
+  .tableWrap table{width:100%;table-layout:fixed;min-width:0;}
+  /* last column: keep tight, avoid phantom right whitespace */
+    #tblWords th:last-child, #tblWords td:last-child { width:104px; max-width:104px; }
+#tblSent  th:last-child, #tblSent  td:last-child { width:104px; max-width:104px; }
+
+/* Words: keep action column tight */
+#tbodyWords td:last-child { width:104px; max-width:104px; text-align:center; padding-right:0 !important; padding-left:0 !important; }
+#tbodyWords td:last-child button { margin:0; }
+
+/* Sentences: keep column width but add right breathing room (match left padding feel) */
+#tbodySent td:last-child { width:72px; max-width:72px; text-align:center; padding-left:0 !important; padding-right:10px !important; }
+#tbodySent td:last-child button { margin:0 auto; }
+
+/* Force header alignment for action column */
+#tblWords thead th:last-child, #tblSent thead th:last-child { text-align:center !important; }
+#tblWords thead th:last-child, #tblSent thead th:last-child { padding-left:0 !important; padding-right:0 !important; }
+
+/* Sentence table wrapper: add right padding to match left padding visually */
+#sentWrap{ padding-right:14px; }
+#sentWrap table{ width:100%; }
+  .iconBtn.pron{padding:6px 12px;font-size:12px;min-width:44px;border-radius:12px;background:#F4F6FA;border:1px solid rgba(0,0,0,0.06);color:#111827;transition:all 0.2s ease;}
+  .iconBtn.pron:hover{background:#E3EAF6;box-shadow:0 2px 6px rgba(0,0,0,0.08);}
+  .pronRow{gap:8px;}
+  .pronCol .muted{font-size:12px;}
+  .phText{font-size:12px;}
+  #wordsTable th, #wordsTable td{overflow:hidden;text-overflow:ellipsis;}
+  th:nth-child(5), td:nth-child(5){width:180px;}
+  th:nth-child(6), td:nth-child(6){width:120px;}
+  #wordsTable td:nth-child(2), #wordsTable td:nth-child(3){word-break: break-word;}
+
+/* ====== Fix47: modal layout (no clipping) ====== */
+.modalBox{ max-height: 90vh; display:flex; flex-direction:column; }
+.modalBd{ flex:1; overflow:auto; }
+#imexText{ min-height: 260px; height: auto; }
+
+/* ====== Fix47: title/meta spacing ====== */
+.meta{ flex-wrap: wrap; row-gap: 6px; }
+
+.pronCol{display:flex;flex-direction:column;gap:6px}
+.pronRow{display:flex;gap:8px;align-items:center}
+.iconBtn.pron{padding:6px 12px;font-size:12px;border-radius:12px;background:#F4F6FA;border:1px solid rgba(0,0,0,0.06);color:#111827;transition:all 0.2s ease}
+.iconBtn.pron:hover{background:#E3EAF6;box-shadow:0 2px 6px rgba(0,0,0,0.08)}
+.muted{font-size:12px;opacity:.85}
+
+
+/* --- Badges: right-aligned (match the right edge of the action button area) --- */
+.badgeRow{
+  position: static;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+.badge{
+  background: rgba(255,255,255,0.88);
+  border: 1px solid rgba(255,255,255,0.65);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.10);
+  backdrop-filter: blur(10px);
+  border-radius: 14px;
+  padding: 8px 10px;
+}
+.badge .badgeTop{ font-weight: 800; letter-spacing: .2px; }
+.badge .badgeSub{ opacity: .88; }
+
+/* --- Stat card sky for 易错词 --- */
+.statCard.sky{
+  background: linear-gradient(180deg, rgba(59,130,246,0.14), rgba(59,130,246,0.06));
+  border: 1px solid rgba(59,130,246,0.18);
+}
+.chip.sky{
+  background: rgba(59,130,246,0.16);
+  border: 1px solid rgba(59,130,246,0.22);
+  color: #1d4ed8;
+}
+
+/* --- Review mini row under progress --- */
+.reviewMini{
+  margin-top: 10px;
+}
+.reviewMiniRow{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.reviewMiniItem{
+  flex:1 1 200px;
+  min-width: 200px;
+  background: rgba(255,255,255,0.62);
+  border: 1px solid rgba(255,255,255,0.55);
+  border-radius: 14px;
+  padding: 10px 12px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+  position: relative;
+  overflow:hidden;
+}
+.reviewMiniLabel{ font-size: 12px; opacity:.85; }
+.reviewMiniValue{ font-size: 22px; font-weight: 900; margin-top: 2px; }
+.reviewMiniCompare{ font-size: 12px; opacity:.75; margin-top: 2px; }
+.miniBars{
+  position:absolute;
+  right:12px;
+  bottom:10px;
+  display:flex;
+  gap:6px;
+  align-items:flex-end;
+  height: 28px;
+}
+.miniBar{
+  width: 10px;
+  border-radius: 6px;
+  background: rgba(148,163,184,0.55);
+}
+.miniBar.cur{
+  background: rgba(59,130,246,0.75);
+}
+</style>
+
+
+<style>
+/* 2.50.2: badges are display-only */
+.badge, .stat-badge, .display-badge {
+  cursor: default !important;
+  pointer-events: none !important;
+  box-shadow: none !important;
+}
+</style>
+</head>
+<body>
+  <div class="hero">
+    <div class="container" style="padding:0 14px;">
+      <h1 class="titleWrap">
+        <img src="logo.png" class="appLogo" alt="logo" onerror="this.onerror=null;this.src='icon128.png';" />
+        <span class="titleText">
+          <span class="titleLine">全能英语单词本 <span class="sub">PRO</span><span id="ver" class="verInline"></span></span>
+          <span id="limitInfo" class="tagline">Personal English Asset System</span>
+        </span>
+      </h1>
+
+
+      <div class="progressRow">
+        <div style="min-width:170px;font-weight:900;opacity:.95">学习进度</div>
+        <div class="progress"><div id="topProgress"></div></div>
+        <div id="topProgressText" style="min-width:120px;text-align:right;font-weight:900;opacity:.95">0%</div>
+      </div>
+      <div id="reviewMini" class="reviewMini"></div>
+      <div class="badgeRow" id="badgeRow" style="margin-top:10px;"></div>
+      <div id="dashboard"></div>
+
+
+      <div class="tabsBar">
+        <div class="tabs">
+          <button class="tab active" id="tabWords">📚 单词管理</button>
+          <button class="tab" id="tabSentences">💬 收藏金句</button>
+        </div>
+        <button class="reviewBtn" id="btnStartReview">🧠 艾宾浩斯复习</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="cards" id="statCards">
+      <!-- injected -->
+    </div>
+
+    <div class="toolbar" id="toolbarWords">
+      <label class="pill"><input type="checkbox" id="checkAll"> 全选</label>
+
+      <input class="input searchInput" id="search" placeholder="搜索" />
+
+      <select class="select" id="sortField">
+        <option value="time">按时间</option>
+        <option value="alpha">按字母</option>
+        <option value="status">按学习状态</option>
+        <option value="count">按学习次数</option>
+        <option value="mastery">按掌握度</option>
+      </select>
+      <button class="btn ghost" id="sortDir">⬆︎ 正序</button>
+
+      <button class="btn ghost" id="btnImport">⬇️ 导入</button>
+      <button class="btn ghost" id="btnExport">⬆️ 导出</button>
+      <div class="pill">
+        <label style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="toggleCn" checked> 中文释义</label>
+        <label style="display:flex;align-items:center;gap:6px;margin-left:8px;"><input type="checkbox" id="toggleEn"> 英文释义</label>
+        <label style="display:flex;align-items:center;gap:6px;margin-left:8px;"><input type="checkbox" id="toggleNote" checked> 批注</label>
+      </div>
+
+      <div class="toolbar-right">
+        <button class="btn green" id="btnBulkCycle">批量切换状态</button>
+        <button class="btn danger-light" id="btnBulkDelete">批量删除</button>
+        <button class="btn danger-deep" id="btnClearWords">清空</button>
+        <button class="btn primary" id="btnRefresh">🔄 刷新</button>
+      </div>
+    </div>
+
+    <div class="tableWrap" id="wordsWrap">
+      <div id="wordCards" class="word-cards"></div>
+      <div class="empty" id="emptyWords" style="display:none;">还没有单词。去网页里“标记生词”，会立刻出现在这里。</div>
+    </div>
+
+    <div class="toolbar" id="toolbarSentences" style="display:none;">
+      <label class="pill"><input type="checkbox" id="checkAllSent"> 全选</label>
+      <input class="input searchInput" id="searchSentence" placeholder="搜索" />
+      <select class="select" id="sortSentenceField">
+        <option value="time">按时间</option>
+        <option value="alpha">按字母</option>
+        <option value="length">按长度</option>
+      </select>
+      <button class="btn ghost" id="sortSentenceDir">⬆︎ 正序</button>
+      <button class="btn ghost" id="btnImportSent">⬇️ 导入金句</button>
+      <button class="btn ghost" id="btnExportSent">⬆️ 导出金句</button>
+      <div class="pill">
+        <label style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="toggleSentTrans" checked> 翻译</label>
+        <label style="display:flex;align-items:center;gap:6px;margin-left:8px;"><input type="checkbox" id="toggleSentNote" checked> 批注</label>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn danger-light" id="btnBulkDeleteSent">批量删除</button>
+        <button class="btn danger-deep" id="btnClearSentences">清空</button>
+        <button class="btn primary" id="btnRefresh2">🔄 刷新</button>
+      </div>
+    </div>
+
+    <div class="tableWrap" id="sentWrap" style="display:none;">
+      <div id="sentCards" class="sent-cards"></div>
+      <div class="empty" id="emptySent" style="display:none;">还没有收藏金句。</div>
+    </div>
+
+    <div class="hintBox">
+      <div style="font-weight:900;margin-bottom:6px;">导入 / 导出格式说明</div>
+      <div>1) <b>JSON</b>：单词页仅导入/导出 <code>{ words: [...] }</code>；金句页仅导入/导出 <code>{ sentences: [...] }</code>。</div>
+      <div>2) <b>TXT</b>：单词页为 <code>word	meaning	note</code>；金句页为 <code>sentence	translation</code>。</div>
+      <div>3) <b>CSV</b>：单词页列为 <code>word,meaning,note,status,reviewCount,phoneticUS,phoneticUK,audioUS,audioUK</code>；金句页列为 <code>text,translation,note,url,title,createdAt</code>。</div>
+      <div class="small">去重逻辑：导入时自动合并重复项（不会用空字段覆盖已有释义/批注）。导出文件名会自动带上 <b>版本号 + 时间戳</b>。</div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modalMask" id="modalMask">
+    <div class="modal">
+      <div class="modalHd">
+        <div id="modalTitle">导入/导出</div>
+        <button class="btn ghost" id="modalClose" style="padding:8px 10px;">✕</button>
+      </div>
+      <div class="modalBd">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <select class="select" id="ioMode">
+            <option value="export">导出</option>
+            <option value="import">导入</option>
+          </select>
+          <select class="select" id="ioFormat">
+            <option value="json">JSON（推荐）</option>
+            <option value="txt">TXT</option>
+            <option value="csv">CSV</option>
+          </select>
+          <input type="file" id="fileInput" style="display:none" />
+          <button class="btn primary" id="btnChooseFile">选择文件</button>
+          <button class="btn ghost" id="btnDownloadTemplate">下载模板</button>
+        </div>
+        <div class="small" id="fileInfo" style="margin-top:8px;display:none;"></div>
+        <div id="filePreviewWrap" style="margin-top:8px;display:none;">
+          <div class="small" style="margin-bottom:6px;">文件预览（前 80 行）</div>
+          <pre id="filePreview" class="filePreview"></pre>
+        </div>
+        <div style="margin-top:12px;">
+          <textarea id="ioText" spellcheck="false" placeholder="导出会在这里生成内容；导入也可以直接把内容粘贴到这里。"></textarea>
+        </div>
+        <div class="small" id="ioHint" style="margin-top:8px;">提示：导入会自动去重合并（空字段不会覆盖已有数据）。免费版超过 200 词的部分会被拒绝。</div>
+        <div class="small" id="ioError" style="margin-top:6px;display:none;"></div>
+      </div>
+      <div class="modalFt">
+        <button class="btn ghost" id="btnCancel">取消</button>
+        <button class="btn primary" id="btnOk">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="manager.js"></script>
+</body>
+</html>
