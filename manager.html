@@ -10,19 +10,49 @@
   <style>
     body{margin:0;background:#f5f7fb;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
     .hero{position:relative;
-      background: linear-gradient(135deg, #7c3aed, #2563eb);
-      color:#fff;padding:22px 18px 18px;
+      background: linear-gradient(135deg, #312e81 0%, #5b21b6 45%, #7c3aed 100%);
+      color:#fff;padding:20px 18px 18px;
     }
-    .hero h1{margin:0;font-size:42px;font-weight:900;letter-spacing:0.2px;line-height:1.1;text-align:center}
-    .titleWrap{display:flex;align-items:center;justify-content:center;gap:16px}
-    .appLogo{width:82px;height:82px;border-radius:0;object-fit:contain;display:inline-block;background:transparent;padding:0;box-sizing:border-box;box-shadow:none}
-    .titleText{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
-    .titleLine{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
-    .titleText .sub{font-size:15px;font-weight:900;opacity:.95;line-height:1}
-    .verInline{font-size:14px;font-weight:900;opacity:.9}
-    .tagline{font-size:18px;font-weight:800;letter-spacing:.3px;opacity:.95;color:#e2e8f0}
-    .brandSignature{font-size:13px;font-weight:600;letter-spacing:2px;opacity:.85;color:#e2e8f0;text-transform:none}
-    @media (max-width:560px){.appLogo{width:58px;height:58px;border-radius:0}.hero h1{font-size:34px}.tagline{font-size:14px}.brandSignature{font-size:11px;letter-spacing:1.4px}}
+    .hero h1{margin:0}
+    .titleWrap{display:flex;align-items:flex-start;justify-content:flex-start;gap:18px}
+    .appLogo{width:124px;height:124px;border-radius:0;object-fit:contain;display:inline-block;background:transparent;padding:0;box-sizing:border-box;box-shadow:none}
+    .titleText{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0}
+    .brandEyebrow{font-size:15px;line-height:1.1;letter-spacing:.55em;color:#c7d2fe;text-transform:uppercase;font-weight:700;margin-bottom:6px}
+    .titleLine{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+    .titleHord{font-size:74px;line-height:1;font-weight:950;background:linear-gradient(135deg,#8b5cf6,#a78bfa);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .titleDot{font-size:58px;line-height:1;font-weight:900;color:#1e1b4b;opacity:.92}
+    .titleCn{font-size:74px;line-height:1;font-weight:950;color:#0f172a}
+    .verInline{font-size:30px;font-weight:900;color:#e9d5ff;opacity:.95}
+    .titleOwn{font-size:84px;line-height:1.02;font-weight:940;background:linear-gradient(135deg,#a78bfa,#8b5cf6);-webkit-background-clip:text;background-clip:text;color:transparent;margin-top:8px}
+    .titleCNSub{font-size:56px;line-height:1.15;font-weight:780;color:#334155;margin-top:14px}
+    .tagline{font-size:12px;font-weight:800;letter-spacing:.02em;opacity:.9;color:#c7d2fe;margin-top:6px}
+    .brandSignature{display:none}
+    @media (max-width:1200px){
+      .appLogo{width:100px;height:100px}
+      .brandEyebrow{font-size:13px}
+      .titleHord,.titleCn{font-size:54px}
+      .titleOwn{font-size:60px}
+      .titleCNSub{font-size:36px}
+      .verInline{font-size:24px}
+    }
+    @media (max-width:880px){
+      .appLogo{width:74px;height:74px}
+      .brandEyebrow{font-size:12px;letter-spacing:.35em}
+      .titleHord,.titleCn{font-size:36px}
+      .titleDot{font-size:34px}
+      .titleOwn{font-size:42px}
+      .titleCNSub{font-size:24px}
+      .verInline{font-size:18px}
+    }
+    @media (max-width:560px){
+      .appLogo{width:56px;height:56px}
+      .brandEyebrow{font-size:10px;letter-spacing:.25em}
+      .titleHord,.titleCn{font-size:28px}
+      .titleDot{font-size:26px}
+      .titleOwn{font-size:30px}
+      .titleCNSub{font-size:18px}
+      .verInline{font-size:14px}
+    }
     .hero .meta{margin-top:8px;opacity:.95;font-size:12px;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;line-height:1.5;max-width:100%}
     .hero .meta span{max-width:100%;word-break:break-word}
     .hero .progressRow{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
