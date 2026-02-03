@@ -9,7 +9,7 @@ cd "$ROOT"
 VERSION="$(node -e "const m=require('./manifest.json'); console.log(m.version || '0.0.0')")"
 
 OUTDIR="dist"
-ZIPNAME="VocabMaster-Extension-${VERSION}.zip"
+ZIPNAME="HORD-English-Companion-${VERSION}.zip"
 
 rm -rf "$OUTDIR"
 mkdir -p "$OUTDIR"

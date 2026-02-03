@@ -1,4 +1,4 @@
-// 霍德英语学习管家 - Manager
+// HORD English Companion - Manager
 // Stable manager script: reads DB via background OP_GET_STATE (single source of truth)
 
 (async function(){
@@ -35,7 +35,7 @@
     const verEl = document.getElementById('ver');
     const limitEl = document.getElementById('limitInfo');
     if (verEl) verEl.textContent = `v${v}`;
-    if (limitEl) limitEl.textContent = 'Personal English Asset System';
+    if (limitEl) limitEl.textContent = 'OWN YOUR WORDS';
   } catch(e) {}
 
   applyPageTheme({});
@@ -989,8 +989,8 @@
 
     if(el.limitInfo){
       el.limitInfo.textContent = ent.review_mode === 'advanced'
-        ? 'Personal English Asset System · Pro'
-        : 'Personal English Asset System · Free';
+        ? 'HORD English Companion · Pro'
+        : 'HORD English Companion · Free';
     }
   }
 
@@ -2978,7 +2978,7 @@
       }else if(fmt === 'txt'){
         if(ioTarget === 'sentences'){
         downloadText('sentences_template.txt', [
-          '# 霍德英语学习管家 Import Template (Sentences)',
+          '# HORD English Companion Import Template (Sentences)',
           '# Lines starting with # are comments.',
           '# SENTENCE\tTRANSLATION\tNOTE\tURL\tTITLE\tSOURCE_LABEL\tCREATED_AT',
           'This is a sample sentence.\t这是一个示例句子。\t我的批注\thttps://example.com\tExample Title\t导入\t0',
@@ -2986,7 +2986,7 @@
         ].join('\n'));
       }else{
         downloadText('vocab_template.txt', [
-          '# 霍德英语学习管家 Import Template (Words)',
+          '# HORD English Companion Import Template (Words)',
           '# Lines starting with # are comments.',
           '# WORD\tMEANING\tENGLISH_MEANING\tNOTE\tSTATUS\tREVIEWCOUNT\tPHONETIC_US\tPHONETIC_UK\tAUDIO_US\tAUDIO_UK\tSOURCE_URL\tSOURCE_LABEL\tCREATED_AT\tUPDATED_AT',
           'example\t例子\tan example | a representative case\t我的批注\tyellow\t1\t/ɪgˈzæmpəl/\t/ɪgˈzɑːmpəl/\t\t\thttps://example.com\t导入\t0\t0',
@@ -3064,7 +3064,7 @@
         el.ioText.value = lines.join('\n');
       }else if(fmt === 'txt'){
         const lines = [];
-        lines.push(`# 霍德英语学习管家 Export (Sentences)`);
+        lines.push(`# HORD English Companion Export (Sentences)`);
         lines.push(`# version: ${ver}`);
         lines.push(`# exportedAt: ${new Date().toISOString()}`);
         lines.push('');
@@ -3087,7 +3087,7 @@
       el.ioText.value = toCSV(words);
     }else if(fmt === 'txt'){
       const lines = [];
-      lines.push(`# 霍德英语学习管家 Export (Words)`);
+      lines.push(`# HORD English Companion Export (Words)`);
       lines.push(`# version: ${ver}`);
       lines.push(`# exportedAt: ${new Date().toISOString()}`);
       lines.push('');
@@ -3377,7 +3377,7 @@
     const man = chrome.runtime.getManifest();
     if(el.ver) el.ver.textContent = `v${man.version}`;
     if(el.realTimeStat) el.realTimeStat.textContent = '';
-    if(el.limitInfo) el.limitInfo.textContent = 'Personal English Asset System';
+    if(el.limitInfo) el.limitInfo.textContent = 'OWN YOUR WORDS';
   }catch(e){}
   await refresh();
   setTab(state.tab === 'sentences' ? 'sentences' : 'words');

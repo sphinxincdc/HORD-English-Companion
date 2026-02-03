@@ -1,3 +1,9 @@
+## 2.53.70 (2026-02-03)
+- Rebrand: Unified product name to `HORD English Companion` across popup/manager/options/content/manifest and docs.
+- Rebrand: Unified slogan to `OWN YOUR WORDS` in UI and export brand copy.
+- Tweak: Updated release zip/output naming and quote card export default filename prefix to the new brand.
+- Scope: `manifest.json`, `popup.html`, `manager.html`, `manager.js`, `options.html`, `content.js`, `README.md`, `export-card.js`, `quote_card_export.js`, `scripts/release_zip.sh`, `CHANGELOG.md`.
+
 ## 2.53.69 (2026-02-03)
 - Tweak: 复习会话改为“仅提示不加题”模式：低分与错题仅给补充复习建议，不再自动把题量从设定值（如 20）扩展到更多。
 - Scope: `test.js`, `manifest.json`, `CHANGELOG.md`.
@@ -90,7 +96,7 @@
 
 ## 2.53.51 (2026-02-03)
 - Files: manifest.json, theme.css, popup.html, popup.js, manager.html, manager.js, options.html, options.js, CHANGELOG.md
-- Change: 品牌名称统一改为“霍德英语学习管家”（manifest、popup、manager、options）；深色主题开关升级为“自动夜间深色模式 + 夜间深色模式”双逻辑（自动=跟随系统；关闭自动后可手动强制夜间）；手动夜间与系统自动夜间使用同一套深紫主题令牌，并同步应用到 popup、manager（单词本）、options（设置页）。
+- Change: 品牌名称统一改为“HORD English Companion”（manifest、popup、manager、options）；深色主题开关升级为“自动夜间深色模式 + 夜间深色模式”双逻辑（自动=跟随系统；关闭自动后可手动强制夜间）；手动夜间与系统自动夜间使用同一套深紫主题令牌，并同步应用到 popup、manager（单词本）、options（设置页）。
 - Scope: UI/主题与文案同步，不改词库/复习等业务逻辑。
 - Risk: 若个别模块对 `popup_force_dark` 旧键有依赖，已保留兼容回退读取。
 
@@ -120,7 +126,7 @@
 
 ## 2.53.46 (2026-02-03)
 - Files changed: manager.html, manager.js, styles.css, quote_card_export.js, manifest.json, CHANGELOG.md
-- Change: Added sentence-level “导出卡片” flow in manager with canvas PNG export modal (Light/Dark/Academic templates, 1:1 & 4:5 ratios, translation/source/watermark switches, preview, and localStorage persistence); added per-card export action and shared toast/error feedback; extracted export rendering into standalone `quote_card_export.js`; updated brand signature placement to `Own Your Words.` under `Personal English Asset System` and removed right-side gold artistic motto.
+- Change: Added sentence-level “导出卡片” flow in manager with canvas PNG export modal (Light/Dark/Academic templates, 1:1 & 4:5 ratios, translation/source/watermark switches, preview, and localStorage persistence); added per-card export action and shared toast/error feedback; extracted export rendering into standalone `quote_card_export.js`; updated brand signature placement to `OWN YOUR WORDS` under `HORD English Companion` and removed right-side gold artistic motto.
 - Risk: Medium-low; manager UI gained one new modal and one new per-item action, no existing word/review data logic changed.
 - Rollback: Restore listed files from 2.53.45 and bump manifest version.
 
@@ -342,7 +348,7 @@
 
 ## 2.53.9 (2026-01-30)
 - Files changed: manager.html, manager.js, styles.css, popup.html, options.html, content.js, manifest.json, CHANGELOG.md
-- Change: Rebrand to 全能英语单词本PRO / Personal English Asset System; logo purple embed + larger; tagline font updated; word-card right overflow further constrained; action button sizes unified. Version sync.
+- Change: Rebrand to HORD English Companion; logo purple embed + larger; tagline font updated; word-card right overflow further constrained; action button sizes unified. Version sync.
 - Risk: UI-only changes.
 - Rollback: Restore listed files from 2.53.8 and bump manifest version.
 
@@ -378,7 +384,7 @@
 
 ## 2.53.3 (2026-01-30)
 - Files changed: manager.html, manager.js, test.html, test.js, manifest.json, CHANGELOG.md
-- Change: Manager header tagline updated to "Craft Your Personal English Asset System"; review test completion now shows score + encouragement. Version sync.
+- Change: Manager header tagline updated to "Craft Your HORD English Companion"; review test completion now shows score + encouragement. Version sync.
 - Risk: UI-only changes; test flow unchanged.
 - Rollback: Restore manager.html/manager.js/test.html/test.js/manifest.json from 2.53.2 and bump manifest version.
 

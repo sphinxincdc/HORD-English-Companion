@@ -1014,7 +1014,7 @@ function ensureResultBox() {
   const wrapper = document.createElement('div');
   wrapper.className = 'vb';
   wrapper.innerHTML = `
-    <div class="card" role="dialog" aria-label="霍德英语学习管家">
+    <div class="card" role="dialog" aria-label="HORD English Companion">
       <div class="top">
         <div class="title">
           <div class="headrow">

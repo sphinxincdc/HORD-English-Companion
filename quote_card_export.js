@@ -251,7 +251,7 @@
     }
 
     if(settings.showWatermark){
-      const mark = 'VocabMaster';
+      const mark = 'HORD English Companion';
       ctx.fillStyle = palette.meta;
       ctx.font = `600 ${isPortrait ? 28 : 26}px ${FONT_STACK}`;
       const markW = ctx.measureText(mark).width;
@@ -276,7 +276,7 @@
       }, 'image/png');
     });
 
-    const prefix = (options && options.filenamePrefix) || 'vocabmaster-quote';
+    const prefix = (options && options.filenamePrefix) || 'hord-english-companion-quote';
     const filename = `${prefix}-${getTimestamp()}.png`;
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

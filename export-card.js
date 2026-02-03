@@ -2,7 +2,7 @@
   'use strict';
 
   const BRAND_NAME = 'HORD';
-  const BRAND_TAGLINE = 'Own Your Words.';
+  const BRAND_TAGLINE = 'OWN YOUR WORDS';
 
   const FONT_STACK_QUOTE = '"Inter","Segoe UI","PingFang SC","Microsoft YaHei",sans-serif';
   const FONT_STACK_BODY = '"Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif';

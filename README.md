@@ -1,8 +1,8 @@
-# VocabMaster-Extension
+# HORD English Companion
 
-VocabMaster 是一款面向长期学习的英语词汇管理 Chrome 插件：在阅读中即时捕捉生词，支持批注与复习节奏管理，并提供生词本管理页与可视化统计，帮助你把零散输入沉淀为可积累的语言资产。
+HORD English Companion 是一款面向长期学习的英语词汇管理 Chrome 插件：在阅读中即时捕捉生词，支持批注与复习节奏管理，并提供生词本管理页与可视化统计，帮助你把零散输入沉淀为可积累的语言资产。
 
-> Own Your Words.
+> OWN YOUR WORDS
 
 ## 亮点功能
 - **网页划词 / 双击取词**：快速记录单词、短语与语境
