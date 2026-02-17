@@ -1,0 +1,25 @@
+{
+  "name": "vocab-builder-pack",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "pack-zip": "powershell -ExecutionPolicy Bypass -File \"scripts\\package_extension.ps1\"",
+    "pack-crx": "powershell -ExecutionPolicy Bypass -File \"scripts\\package_extension.ps1\" -CreateCRX",
+    "pack-crx-node": "node scripts/pack-crx.js",
+    "build:mobile-web": "node scripts/build_mobile_web.mjs",
+    "check:mobile-web": "node scripts/mobile_smoke_check.mjs",
+    "check:manager": "node scripts/manager_smoke_check.mjs",
+    "publish:mobile-web": "powershell -ExecutionPolicy Bypass -File \"scripts\\publish_mobile_web.ps1\" -AutoCommit",
+    "publish:mobile-web:push": "powershell -ExecutionPolicy Bypass -File \"scripts\\publish_mobile_web.ps1\" -AutoCommit -AutoPush",
+    "release:mobile-major": "powershell -ExecutionPolicy Bypass -File \"scripts\\release_mobile_major.ps1\"",
+    "release:full": "powershell -ExecutionPolicy Bypass -File \"scripts\\release_full.ps1\"",
+    "release:full:nopush": "powershell -ExecutionPolicy Bypass -File \"scripts\\release_full.ps1\" -SkipPush -SkipGithubRelease -SkipCommit",
+    "mock:10k": "node scripts/mock_asset_10k.mjs --words 10000 --quotes 1000 --out tmp/hord_mock_10k.json",
+    "bench:merge-review": "node scripts/bench_merge_review.mjs --input tmp/hord_mock_10k.json --loops 1 --samples 5 --k 100"
+  },
+  "devDependencies": {
+    "archiver": "^5.3.1",
+    "node-forge": "^1.3.1",
+    "wrangler": "^4.64.0"
+  }
+}
