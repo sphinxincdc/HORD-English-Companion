@@ -636,8 +636,8 @@ function ensureResultBox() {
   style.textContent = `
     :host{
       all: initial;
-      --vb-brand-1:#4f46e5;
-      --vb-brand-2:#7c3aed;
+      --vb-brand-1:#7c3aed;
+      --vb-brand-2:#a855f7;
       --vb-brand-grad:linear-gradient(135deg,var(--vb-brand-1) 0%,var(--vb-brand-2) 100%);
 
       --vb-success-bg:rgba(34,197,94,.14);
@@ -686,8 +686,8 @@ function ensureResultBox() {
     }
 
     .vb.vb-dark{
-      --vb-brand-1:#6d5ef6;
-      --vb-brand-2:#9c6bff;
+      --vb-brand-1:#7c3aed;
+      --vb-brand-2:#a855f7;
       --vb-brand-grad:linear-gradient(135deg,var(--vb-brand-1) 0%,var(--vb-brand-2) 100%);
 
       --vb-success-bg:rgba(34,197,94,.20);
@@ -702,17 +702,17 @@ function ensureResultBox() {
       --vb-danger-bd:rgba(248,113,113,.40);
       --vb-danger-fg:#fecaca;
 
-      --vb-surface:#171327;
-      --vb-surface-2:#1d1730;
-      --vb-surface-elev:#221a37;
-      --vb-text:#f3ecff;
-      --vb-muted:rgba(232,220,255,.70);
-      --vb-border:rgba(181,150,255,.25);
-      --vb-border-2:rgba(181,150,255,.34);
+      --vb-surface:rgba(12,14,30,.92);
+      --vb-surface-2:rgba(10,12,26,.86);
+      --vb-surface-elev:rgba(16,18,36,.92);
+      --vb-text:#eef2ff;
+      --vb-muted:rgba(226,232,240,.68);
+      --vb-border:rgba(148,163,184,.18);
+      --vb-border-2:rgba(148,163,184,.26);
       --vb-soft-bg:rgba(255,255,255,.06);
       --vb-soft-bg-2:rgba(255,255,255,.04);
-      --vb-top-bg:linear-gradient(180deg, rgba(124,58,237,.34), rgba(23,19,39,0));
-      --vb-input-bg:#120f1f;
+      --vb-top-bg:linear-gradient(180deg, rgba(124,58,237,.22), rgba(12,14,30,0));
+      --vb-input-bg:rgba(10,12,26,.86);
       --vb-notechip-bg:rgba(124,58,237,.24);
       --vb-notechip-bd:rgba(167,139,250,.44);
       --vb-notechip-fg:#efe5ff;
@@ -720,7 +720,7 @@ function ensureResultBox() {
       --vb-note-head-fg:#efe5ff;
       --vb-overlay-bg:rgba(9,6,18,.58);
 
-      --vb-shadow-md:0 14px 36px rgba(6,2,18,.55);
+      --vb-shadow-md:0 16px 34px rgba(0,0,0,.46);
     }
 
     .vb{
@@ -1234,6 +1234,33 @@ function isShortEnglishPhrase(text) {
   return true;
 }
 
+function normalizePhraseForWordMode(text) {
+  const raw = String(text || '').trim();
+  if (!raw) return '';
+  let s = raw
+    .replace(/[\u2018\u2019\u201C\u201D"`]/g, '')
+    .replace(/[.,!?;:()[\]{}\\/|]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!s) return '';
+  // If non-latin scripts appear, do not force phrase mode.
+  if (/[\u4E00-\u9FFF\u3040-\u30FF\uAC00-\uD7AF\u0400-\u04FF\u0600-\u06FF\u0900-\u097F]/.test(s)) return '';
+  return s;
+}
+
+function isSimpleEnglishPhraseForWordMode(text) {
+  const s = normalizePhraseForWordMode(text);
+  if (!s) return false;
+  if (isProbablyEnglishWord(s)) return true;
+  if (isShortEnglishPhrase(s)) return true;
+  const parts = s.split(/\s+/).filter(Boolean);
+  if (parts.length < 2 || parts.length > MAX_PHRASE_WORDS) return false;
+  for (const p of parts) {
+    if (!/^[A-Za-z][A-Za-z'\-]*$/.test(p)) return false;
+  }
+  return true;
+}
+
 function parseYoudao(html) {
   if (!html) return null;
 
@@ -1571,6 +1598,36 @@ async function onSaveNote() {
 
   // Translate note => auto-save into quotes (金句收藏本)
   if (boxState.mode === 'translate') {
+    // Safety guard: simple English phrases should not enter quote library.
+    const phraseWord = normalizePhraseForWordMode(boxState.text || '');
+    if (isSimpleEnglishPhraseForWordMode(phraseWord)) {
+      const w = phraseWord.toLowerCase().trim();
+      if (w) {
+        const d = await getDB([
+          STORAGE_KEYS.vocabList,
+          STORAGE_KEYS.vocabNotes
+        ]);
+        let list = Array.isArray(d.vocabList) ? d.vocabList : [];
+        const notes = d.vocabNotes || {};
+
+        list = Array.from(new Set(list.map(x => String(x || '').toLowerCase().trim()).filter(Boolean)));
+        if (!list.includes(w)) list.unshift(w);
+
+        if (note) notes[w] = note;
+        else delete notes[w];
+
+        await setDB({ vocabList: list, vocabNotes: notes });
+        boxState.mode = 'word';
+        boxState.word = w;
+        boxState.note = note;
+        renderBox(boxState);
+        rebuildWordsCacheFromDb({ ...d, vocabList: list, vocabNotes: notes });
+        rebuildWordMap();
+        applyHighlightsFromCache();
+        toggleNoteOverlay(false);
+        return;
+      }
+    }
     boxState.note = note;
     const text = boxState.text;
     if (!text) return;
@@ -1603,6 +1660,10 @@ async function onSaveNote() {
 
 async function toggleFavoriteQuote() {
   if (!boxState || boxState.mode !== 'translate') return;
+  if (isSimpleEnglishPhraseForWordMode(boxState.text || '')) {
+    toast('简短英文词组默认归入单词本，不会加入金句库。');
+    return;
+  }
   const text = boxState.text;
   if (!text) return;
   const url = location.href;
@@ -1629,6 +1690,7 @@ async function toggleFavoriteQuote() {
 
 async function ensureQuoteForExport() {
   if (!boxState || boxState.mode !== 'translate') return null;
+  if (isSimpleEnglishPhraseForWordMode(boxState.text || '')) return null;
   const text = String(boxState.text || '').trim();
   if (!text) return null;
   const url = location.href;
@@ -1853,12 +1915,15 @@ async function renderBox(state) {
     const list = Array.isArray(state.translations) && state.translations.length
       ? state.translations
       : (state.translation ? [{text: state.translation, provider: state.translationProvider || ''}] : []);
-    if(list.length >= 2){
+      if(list.length >= 2){
       const nameMap = {
         tencent: 'Tencent',
         aliyun: 'Aliyun',
         azure: 'Azure',
         caiyun: 'Caiyun',
+        youdao: 'Youdao',
+        youdao_web: 'Youdao Web',
+        baidu_web: 'Baidu',
         fallback_google: 'Google',
         google: 'Google'
       };
@@ -1936,12 +2001,11 @@ async function showResultBox(rect, text, trigger = 'select') {
   if (!trimmed) return;
 
   // Mode decision:
-  // - single word => word mode
-  // - short English phrase (<= MAX_PHRASE_WORDS) => word mode (store as phrase)
+  // - single word or simple English phrase => word mode
   // - otherwise => translate mode
-  const wordCount = trimmed.split(/\s+/).filter(Boolean).length;
-  const mode = (isProbablyEnglishWord(trimmed) || (isShortEnglishPhrase(trimmed) && wordCount <= MAX_PHRASE_WORDS)) ? 'word' : 'translate';
-  const word = mode === 'word' ? trimmed : '';
+  const normalizedWordLike = normalizePhraseForWordMode(trimmed);
+  const mode = isSimpleEnglishPhraseForWordMode(trimmed) ? 'word' : 'translate';
+  const word = mode === 'word' ? (normalizedWordLike || trimmed) : '';
 
   if (mode === 'translate' && trimmed.length > MAX_TRANSLATE_CHARS) {
     // Still show the popup, but with a clear message (do not silently 'disappear').
@@ -1972,7 +2036,7 @@ async function showResultBox(rect, text, trigger = 'select') {
   let note = '';
   let status = 'stranger';
   if (mode === 'word') {
-    const rec = await getCurrentWordRecord(trimmed.toLowerCase());
+    const rec = await getCurrentWordRecord(word.toLowerCase());
     note = (rec && rec.note) ? rec.note : '';
     status = (rec && rec.status) ? rec.status : 'stranger';
   }
@@ -2011,7 +2075,7 @@ async function showResultBox(rect, text, trigger = 'select') {
     const resp = await chrome.runtime.sendMessage({
       type: 'GET_TRANSLATIONS',
       mode,
-      text: trimmed
+      text: mode === 'word' ? word : trimmed
     });
 
     if (resp && resp.ok) {
@@ -2022,7 +2086,7 @@ async function showResultBox(rect, text, trigger = 'select') {
         boxState.bing = bg;
         boxState.phonetic = (yd && yd.phonetic) ? yd.phonetic : '';
         try {
-          boxState.enMeaning = await fetchEnglishMeaning(trimmed);
+          boxState.enMeaning = await fetchEnglishMeaning(word || trimmed);
         } catch (_) {}
       } else {
         boxState.translation = resp.translation || '';
@@ -2038,6 +2102,67 @@ async function showResultBox(rect, text, trigger = 'select') {
 
 // ---------------- Popup triggers ----------------
 let __vb_lastTriggerTs = 0;
+
+function __vb_isEditableElement(el){
+  if(!el || !(el instanceof Element)) return false;
+  if(el.closest('input, textarea, select, [contenteditable="true"], [role="textbox"]')) return true;
+  return false;
+}
+
+function __vb_isCodeLikeElement(el){
+  if(!el || !(el instanceof Element)) return false;
+  if(el.closest('pre, code, kbd, samp')) return true;
+  if(el.closest('[class*="monaco" i], [class*="codemirror" i], [class*="ace" i], [class*="cm-" i], [class*="editor" i]')) return true;
+  return false;
+}
+
+function __vb_isSensitiveOrFlowElement(el){
+  if(!el || !(el instanceof Element)) return false;
+  if(el.closest('form, dialog, [role="dialog"], [aria-modal="true"]')) return true;
+  if(el.closest('input[type="password"], input[type="email"], input[type="tel"], input[type="number"], input[type="search"], input[type="url"]')) return true;
+  return false;
+}
+
+function __vb_isYoutubeWatchPage() {
+  try {
+    return /(^|\\.)youtube\\.com$/i.test(location.hostname) && String(location.pathname || '').startsWith('/watch');
+  } catch (_) {
+    return false;
+  }
+}
+
+function __vb_isYoutubeSubtitleEl(el){
+  if(!__vb_isYoutubeWatchPage()) return false;
+  if(!el || !(el instanceof Element)) return false;
+  return !!el.closest('.ytp-caption-window-container, .caption-window, .ytp-caption-segment, .ytp-caption-window-bottom, .captions-text');
+}
+
+let __vb_lastYoutubePauseTs = 0;
+function __vb_tryPauseYouTubeOnSubtitleHover(target){
+  if(!__vb_isYoutubeSubtitleEl(target)) return;
+  const now = Date.now();
+  if(now - __vb_lastYoutubePauseTs < 260) return;
+  const video = document.querySelector('video.html5-main-video, video');
+  if(!(video instanceof HTMLVideoElement)) return;
+  if(video.paused || video.ended) return;
+  try{
+    video.pause();
+    __vb_lastYoutubePauseTs = now;
+  }catch(_){}
+}
+
+function __vb_isNonReadingContainer(el){
+  if(!el || !(el instanceof Element)) return false;
+  if(el.closest('nav, header, footer, aside, [role="navigation"], [role="banner"], [role="contentinfo"]')) return true;
+  if(el.closest('[class*="nav" i], [class*="sidebar" i], [class*="menu" i], [class*="toolbar" i], [class*="breadcrumb" i], [class*="footer" i], [class*="header" i], [class*="ad-" i], [class*="ads" i], [class*="cookie" i], [class*="banner" i], [class*="tooltip" i], [class*="modal" i], [class*="popup" i]')) return true;
+  if(__vb_isYoutubeSubtitleEl(el)) return false;
+  if(el.closest('video, audio, [class*="player" i], [class*="subtitle" i], [class*="caption" i]')) return true;
+  return false;
+}
+
+function __vb_isBlockedContext(el){
+  return __vb_isEditableElement(el) || __vb_isCodeLikeElement(el) || __vb_isSensitiveOrFlowElement(el) || __vb_isNonReadingContainer(el);
+}
 
 function __vb_getSelectionText() {
   const sel = (document.getSelection && document.getSelection()) || window.getSelection();
@@ -2086,12 +2211,28 @@ function __vb_shouldTrigger(text, force = false) {
 function __vb_triggerPopupFromEvent(e, force = false) {
   if (__vb_disabledNow) return;
   if (resultBox && resultBox.contains(e.target)) return;
+  const target = e && e.target ? e.target : null;
+  if (__vb_isBlockedContext(target)) return;
+  const activeEl = document.activeElement;
+  if (__vb_isBlockedContext(activeEl)) return;
 
   const now = Date.now();
   if (!force && now - __vb_lastTriggerTs < 220) return;
 
   const { text, rect } = __vb_getSelectionText();
-  if (!__vb_shouldTrigger(text, force)) return;
+  if (!__vb_shouldTrigger(text, force)) {
+    // Some sites aggressively clear selection on dblclick/mouseup.
+    // For dblclick (force), fall back to word-under-cursor to keep popup usable.
+    if (!force) return;
+    const x = (e && typeof e.clientX === 'number') ? e.clientX : 20;
+    const y = (e && typeof e.clientY === 'number') ? e.clientY : 20;
+    const w = getWordAtPoint(x, y);
+    if (!w) return;
+    __vb_lastTriggerTs = now;
+    const r = rect || { left: x, top: y, right: x, bottom: y, width: 1, height: 1 };
+    showResultBox(r, w, 'dblclick');
+    return;
+  }
 
   __vb_lastTriggerTs = now;
 
@@ -2162,6 +2303,8 @@ function getWordAtPoint(x, y) {
 document.addEventListener('mousemove', (e) => {
   if (hoverTimer) clearTimeout(hoverTimer);
   hoverTimer = setTimeout(async () => {
+    __vb_tryPauseYouTubeOnSubtitleHover(e.target);
+    if (__vb_isBlockedContext(e.target)) return;
     // do not interfere while selecting text
     const sel = window.getSelection ? window.getSelection() : null;
     if (sel && !sel.isCollapsed && (sel.toString() || '').trim()) return;
