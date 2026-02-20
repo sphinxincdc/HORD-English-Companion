@@ -1,3 +1,9 @@
+## 2.54.61 (2026-02-20)
+- Mobile review default-count guard:
+  - Added migration guard for legacy local cache that pinned review session size to non-default values.
+  - If user never explicitly set session size, mobile now hard-resets to default `20`.
+  - Once user modifies session size, value is persisted with explicit user-set marker.
+
 ## 2.54.60 (2026-02-20)
 - Export default policy update (shared engine):
   - `export-card.js` default `showSource` changed to `false`.
