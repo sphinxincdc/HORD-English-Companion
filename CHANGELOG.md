@@ -1,3 +1,9 @@
+## 2.54.54 (2026-02-20)
+- Popup trigger anti-noise hardening:
+  - Added stricter URL/domain-like snippet filtering in `content.js` trigger gate.
+  - Added symbol-density guard to avoid popup on mixed technical/noisy text selections.
+  - Goal: reduce false popup triggers on URL snippets, query fragments, and mixed-content blocks.
+
 ## 2.54.53 (2026-02-20)
 - Mobile quote dialog keyboard hardening (iOS/Safari):
   - Added strict view-mode guard to prevent keyboard popup unless `编辑` is explicitly enabled.

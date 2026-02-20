@@ -2,6 +2,7 @@
   // Prevent duplicate injection (e.g., extension reload/update)
   if (window.__VB_CONTENT_LOADED__) return;
   window.__VB_CONTENT_LOADED__ = true;
+  window.__VB_CONTENT_BUILD__ = '2.54.46-trigger-rules';
 
 // Vocabulary Builder - content script
 // Focus: stable selection/dblclick popup + hover popup on marked words
@@ -30,6 +31,98 @@ let __vb_globalDisable = false;
 let __vb_blacklistDomain = [];
 let __vb_blacklistPage = [];
 let __vb_disabledNow = false;
+const __vb_diag = {
+  logs: [],
+  max: 80,
+  blockedStreak: 0
+};
+
+function __vb_diagLog(event, detail = ''){
+  try{
+    const line = `[${new Date().toLocaleTimeString()}] ${event}${detail ? ` :: ${detail}` : ''}`;
+    __vb_diag.logs.push(line);
+    if(__vb_diag.logs.length > __vb_diag.max) __vb_diag.logs.shift();
+  }catch(_){}
+}
+
+function __vb_diagSnapshot(){
+  return {
+    build: String(window.__VB_CONTENT_BUILD__ || 'n/a'),
+    url: String(location.href || ''),
+    disabledNow: !!__vb_disabledNow,
+    globalDisable: !!__vb_globalDisable,
+    blacklistDomainCount: Array.isArray(__vb_blacklistDomain) ? __vb_blacklistDomain.length : 0,
+    blacklistPageCount: Array.isArray(__vb_blacklistPage) ? __vb_blacklistPage.length : 0,
+    resultBoxReady: !!resultBox,
+    listenerReady: true
+  };
+}
+
+async function __vb_resetPopupConfig(){
+  try{
+    await storageSet({
+      [STORAGE_KEYS.global_disable]: false,
+      [STORAGE_KEYS.blacklist_domain]: [],
+      [STORAGE_KEYS.blacklist_page]: []
+    });
+    __vb_diagLog('reset', 'popup config reset');
+    return true;
+  }catch(e){
+    __vb_diagLog('reset_fail', String(e && e.message || e));
+    return false;
+  }
+}
+
+function __vb_openDiagPanel(){
+  try{
+    const id = 'vb-popup-diag-panel';
+    let panel = document.getElementById(id);
+    if(!panel){
+      panel = document.createElement('div');
+      panel.id = id;
+      panel.style.cssText = [
+        'position:fixed','right:12px','bottom:12px','z-index:2147483647',
+        'width:min(480px,92vw)','max-height:68vh','overflow:auto',
+        'background:#0b1022','color:#e8eeff','border:1px solid #33406f','border-radius:12px',
+        'box-shadow:0 20px 60px rgba(0,0,0,.35)','padding:10px','font:12px/1.45 ui-monospace,Consolas,monospace'
+      ].join(';');
+      panel.innerHTML = `
+        <div style="display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <b>HORD Popup Diagnostics</b>
+          <button id="vb-diag-close" style="border:1px solid #4a5a94;background:#172149;color:#fff;border-radius:8px;padding:4px 8px;cursor:pointer;">关闭</button>
+        </div>
+        <pre id="vb-diag-pre" style="white-space:pre-wrap;word-break:break-word;margin:0 0 8px;"></pre>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <button id="vb-diag-reset" style="border:1px solid #7a2e44;background:#2b1020;color:#ffd7df;border-radius:8px;padding:6px 10px;cursor:pointer;">一键重置弹窗配置</button>
+        </div>
+      `;
+      document.documentElement.appendChild(panel);
+      panel.querySelector('#vb-diag-close')?.addEventListener('click', ()=> panel.remove());
+      panel.querySelector('#vb-diag-reset')?.addEventListener('click', async ()=>{
+        const ok = await __vb_resetPopupConfig();
+        const pre = panel.querySelector('#vb-diag-pre');
+        if(pre) pre.textContent = `${ok ? 'Reset OK' : 'Reset Failed'}\n\n` + pre.textContent;
+      });
+    }
+    const pre = panel.querySelector('#vb-diag-pre');
+    if(pre){
+      const snap = __vb_diagSnapshot();
+      pre.textContent = JSON.stringify(snap, null, 2) + '\n\nRecent logs:\n' + (__vb_diag.logs.join('\n') || '(empty)');
+    }
+  }catch(_){}
+}
+
+function __vb_toBool(v){
+  if (typeof v === 'boolean') return v;
+  if (typeof v === 'number') return v !== 0;
+  if (typeof v === 'string'){
+    const s = v.trim().toLowerCase();
+    if (!s) return false;
+    if (s === 'true' || s === '1' || s === 'on' || s === 'yes') return true;
+    if (s === 'false' || s === '0' || s === 'off' || s === 'no' || s === 'null' || s === 'undefined') return false;
+  }
+  return false;
+}
 
 function __vb_pageKey() {
   try { return location.href.split('#')[0]; } catch(e){ return ''; }
@@ -55,7 +148,7 @@ function __vb_updateDisabledNow() {
 
 
 // Selection heuristics
-const MAX_PHRASE_WORDS = 5; // <= 5 words => treat as word/phrase popup (not translate)
+const MAX_PHRASE_WORDS = 3; // <= 3 words => treat as word/phrase popup (not translate)
 const MAX_TRANSLATE_CHARS = 900; // hard limit for translation selection
 
 // CSS Highlight API 需要在页面注入 ::highlight(...) 样式，否则即使 ranges 设置成功也不会显示任何颜色
@@ -468,7 +561,7 @@ async function initStorageCache() {
     };
     // Also cache disable flags for this page
     try {
-      __vb_globalDisable = !!db[STORAGE_KEYS.global_disable];
+      __vb_globalDisable = __vb_toBool(db[STORAGE_KEYS.global_disable]);
       __vb_blacklistDomain = Array.isArray(db[STORAGE_KEYS.blacklist_domain]) ? db[STORAGE_KEYS.blacklist_domain].slice() : [];
       __vb_blacklistPage = Array.isArray(db[STORAGE_KEYS.blacklist_page]) ? db[STORAGE_KEYS.blacklist_page].slice() : [];
     } catch(e) {
@@ -1915,7 +2008,8 @@ async function renderBox(state) {
     const list = Array.isArray(state.translations) && state.translations.length
       ? state.translations
       : (state.translation ? [{text: state.translation, provider: state.translationProvider || ''}] : []);
-      if(list.length >= 2){
+    const configuredLimit = Number(state.resultLimit) > 0 ? Number(state.resultLimit) : 2;
+    if(list.length >= 2){
       const nameMap = {
         tencent: 'Tencent',
         aliyun: 'Aliyun',
@@ -1927,7 +2021,7 @@ async function renderBox(state) {
         fallback_google: 'Google',
         google: 'Google'
       };
-      const parts = list.slice(0, 2).map((it)=>{
+      const parts = list.slice(0, configuredLimit).map((it)=>{
         const title = nameMap[it.provider] || it.provider || '翻译';
         return renderSection(title, `<div style="font-size:14px;">${escapeHtml(it.text)}</div>`);
       });
@@ -2063,6 +2157,7 @@ async function showResultBox(rect, text, trigger = 'select') {
     enMeaning: null,
     translation: '',
     translations: [],
+    resultLimit: 2,
     isFavorite
   };
 
@@ -2091,6 +2186,7 @@ async function showResultBox(rect, text, trigger = 'select') {
       } else {
         boxState.translation = resp.translation || '';
         boxState.translations = Array.isArray(resp.translations) ? resp.translations : [];
+        boxState.resultLimit = Number(resp.resultLimit) > 0 ? Number(resp.resultLimit) : 2;
       }
     }
   } catch (_) {
@@ -2164,6 +2260,10 @@ function __vb_isBlockedContext(el){
   return __vb_isEditableElement(el) || __vb_isCodeLikeElement(el) || __vb_isSensitiveOrFlowElement(el) || __vb_isNonReadingContainer(el);
 }
 
+function __vb_isHardBlockedContext(el){
+  return __vb_isEditableElement(el) || __vb_isCodeLikeElement(el) || __vb_isSensitiveOrFlowElement(el);
+}
+
 function __vb_getSelectionText() {
   const sel = (document.getSelection && document.getSelection()) || window.getSelection();
   if (!sel) return { text: '', rect: null };
@@ -2185,6 +2285,14 @@ function __vb_getSelectionText() {
 
 function __vb_shouldTrigger(text, force = false) {
   if (!text) return false;
+  // Ignore URL / domain / email-like selections.
+  const s = String(text || '').trim();
+  if (/^(https?:\/\/|www\.)/i.test(s)) return false;
+  if (/^[\w.-]+\.[a-z]{2,}(?:[\/?#].*)?$/i.test(s)) return false;
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)) return false;
+  if (/\b[\w-]+\.(com|net|org|io|dev|ai|co|cn|uk|jp|de|fr|ru|info|app|me|tv)\b/i.test(s)) return false;
+  if (/[/?#=&]{2,}/.test(s)) return false;
+
   // If it's over the translation limit, we will still trigger (and show a helpful message inside the popup).
   if (text.length > MAX_TRANSLATE_CHARS) return true;
   // Ignore selections containing too many newlines (usually whole-page selections)
@@ -2201,6 +2309,8 @@ function __vb_shouldTrigger(text, force = false) {
   const cn = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
   const hasLatin = /[A-Za-z]/.test(text);
   if (!hasLatin) return false; // 没有英文字符，直接不弹
+  const symbolCount = (text.match(/[^A-Za-z0-9\s'",.!?;:()-]/g) || []).length;
+  if (symbolCount / Math.max(1, text.length) > 0.28) return false;
   // 如果中文占比极高（混排），也跳过
   if (cn / Math.max(1, text.length) > 0.15) return false;
 
@@ -2209,18 +2319,33 @@ function __vb_shouldTrigger(text, force = false) {
 }
 
 function __vb_triggerPopupFromEvent(e, force = false) {
-  if (__vb_disabledNow) return;
   if (resultBox && resultBox.contains(e.target)) return;
   const target = e && e.target ? e.target : null;
-  if (__vb_isBlockedContext(target)) return;
+  if (__vb_isHardBlockedContext(target)) {
+    __vb_diag.blockedStreak += 1;
+    __vb_diagLog('blocked_target', target?.tagName || 'unknown');
+    if (__vb_diag.blockedStreak >= 3) __vb_diagLog('hint', 'Press Alt+Shift+D to open diagnostics');
+    if (__vb_diag.blockedStreak === 5) __vb_openDiagPanel();
+    return;
+  }
   const activeEl = document.activeElement;
-  if (__vb_isBlockedContext(activeEl)) return;
+  if (__vb_isHardBlockedContext(activeEl)) {
+    __vb_diag.blockedStreak += 1;
+    __vb_diagLog('blocked_active', activeEl?.tagName || 'unknown');
+    if (__vb_diag.blockedStreak >= 3) __vb_diagLog('hint', 'Press Alt+Shift+D to open diagnostics');
+    if (__vb_diag.blockedStreak === 5) __vb_openDiagPanel();
+    return;
+  }
 
   const now = Date.now();
   if (!force && now - __vb_lastTriggerTs < 220) return;
 
   const { text, rect } = __vb_getSelectionText();
   if (!__vb_shouldTrigger(text, force)) {
+    __vb_diag.blockedStreak += 1;
+    __vb_diagLog('blocked_text', String(text || '').slice(0, 64));
+    if (__vb_diag.blockedStreak >= 3) __vb_diagLog('hint', 'Press Alt+Shift+D to open diagnostics');
+    if (__vb_diag.blockedStreak === 5) __vb_openDiagPanel();
     // Some sites aggressively clear selection on dblclick/mouseup.
     // For dblclick (force), fall back to word-under-cursor to keep popup usable.
     if (!force) return;
@@ -2234,6 +2359,8 @@ function __vb_triggerPopupFromEvent(e, force = false) {
     return;
   }
 
+  __vb_diag.blockedStreak = 0;
+  __vb_diagLog('trigger', force ? 'dblclick' : 'select');
   __vb_lastTriggerTs = now;
 
   let r = rect;
@@ -2248,11 +2375,39 @@ function __vb_triggerPopupFromEvent(e, force = false) {
 
 // Selection by dragging
 document.addEventListener('mouseup', (e) => {
+  try {
+    if (!(resultBox && resultBox.contains(e.target))) {
+      const snap = __vb_getSelectionText();
+      const txtNow = String(snap.text || '').trim();
+      if (txtNow.length >= 2 && __vb_shouldTrigger(txtNow, false)) {
+        const x = Number(e.clientX);
+        const y = Number(e.clientY);
+        const rNow = snap.rect || { left: x, top: y, right: x, bottom: y, width: 1, height: 1 };
+        __vb_lastTriggerTs = Date.now();
+        showResultBox(rNow, txtNow, 'select');
+        return;
+      }
+    }
+  } catch (_) {}
   setTimeout(() => __vb_triggerPopupFromEvent(e, false), 0);
 }, true);
 
 // Double click word
 document.addEventListener('dblclick', (e) => {
+  try {
+    if (!(resultBox && resultBox.contains(e.target))) {
+      const snap = __vb_getSelectionText();
+      const txtNow = String(snap.text || '').trim();
+      if (txtNow.length >= 2 && txtNow.length <= MAX_TRANSLATE_CHARS) {
+        const x = Number(e.clientX);
+        const y = Number(e.clientY);
+        const rNow = snap.rect || { left: x, top: y, right: x, bottom: y, width: 1, height: 1 };
+        __vb_lastTriggerTs = Date.now();
+        showResultBox(rNow, txtNow, 'dblclick');
+        return;
+      }
+    }
+  } catch (_) {}
   setTimeout(() => __vb_triggerPopupFromEvent(e, true), 0);
 }, true);
 
@@ -2326,6 +2481,15 @@ document.addEventListener('mousemove', (e) => {
     const r = { left: e.clientX, top: e.clientY, right: e.clientX, bottom: e.clientY, width: 1, height: 1 };
     showResultBox(r, lw, 'hover');
   }, 90);
+}, true);
+
+document.addEventListener('keydown', (e) => {
+  try {
+    if (e.altKey && e.shiftKey && (e.key === 'D' || e.key === 'd')) {
+      e.preventDefault();
+      __vb_openDiagPanel();
+    }
+  } catch (_) {}
 }, true);
 
 // ---------------- Boot ----------------
