@@ -1,3 +1,13 @@
+## 2.54.59 (2026-02-20)
+- Mobile quote export polish:
+  - Dialog export now uses the *current dialog content* (including unsaved edits in text/translation/note) instead of stale record values.
+  - Added dedicated `exportCurrentDialogQuoteImage()` path for single-quote export from dialog.
+  - Preview now auto-rerenders on viewport resize while dialog is open.
+- Mobile quote dialog visual/readability refinement:
+  - Added scrollable dialog body with max-height cap to prevent action/footer overlap on small screens.
+  - Improved preview control spacing and range slider sizing.
+  - On narrow screens, quote action buttons switch to a 2-column layout for clearer touch targets.
+
 ## 2.54.58 (2026-02-20)
 - Mobile quote export upgraded to preview-first workflow:
   - Added in-dialog export preview canvas for single-quote export.
