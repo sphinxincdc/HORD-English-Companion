@@ -1,3 +1,13 @@
+## 2.54.57 (2026-02-20)
+- Mobile quote dialog visual refactor (show-first):
+  - Added dedicated reading view block (`quoteReadEn/quoteReadCn`) as default.
+  - Edit inputs moved into separate edit panel (hidden by default).
+  - Dialog action bar redesigned to cleaner sticky footer, unified button heights, reduced visual noise.
+  - Edit/Delete controls are now low-frequency in view mode (delete hidden unless editing).
+- Mobile export defaults aligned with product rule:
+  - Default export now disables `showSource` and `showAnnotation`.
+  - Watermark mode forced to bottom signature (`watermarkMode: 'signature'`) for mobile export.
+
 ## 2.54.56 (2026-02-20)
 - Popup diagnostics panel removal:
   - Removed inline diagnostics window trigger path from `content.js`.
