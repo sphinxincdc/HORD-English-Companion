@@ -30,7 +30,7 @@ async function main() {
   ensureContains(html, 'id="q-sort-state"', 'mobile.html missing #q-sort-state', failures);
 
   // User-facing wording checkpoints
-  ensureContains(html, 'Smart Focus Review (50-100)', 'LASER user wording not applied in mobile.html', failures);
+  ensureContains(html, '智能精选复习（50-100）', 'Smart Focus wording not applied in mobile.html', failures);
   ensureContains(js, 'laser_badge', 'mobile.js missing laser_badge i18n key', failures);
   ensureContains(js, '\\u667a\\u80fd\\u7cbe\\u9009\\u590d\\u4e60\\uff0850-100\\uff09', 'mobile.js missing zh smart-focus wording', failures);
 
@@ -57,3 +57,4 @@ main().catch((err) => {
   console.error(err?.stack || String(err));
   process.exit(1);
 });
+

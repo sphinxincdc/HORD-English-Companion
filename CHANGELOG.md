@@ -1,3 +1,16 @@
+## 2.54.58 (2026-02-20)
+- Mobile quote export upgraded to preview-first workflow:
+  - Added in-dialog export preview canvas for single-quote export.
+  - Added mobile export tuning controls: template, ratio, EN/CN fonts, and font-size adjustment.
+  - Controls are synchronized between quote list toolbar and quote dialog preview.
+- Mobile quote dialog readability polish:
+  - Removed sticky/overlapping footer behavior for action bar.
+  - Improved visual rhythm for preview area and action section.
+- Export defaults remain product-safe:
+  - Source and annotation are disabled by default.
+  - Watermark mode kept as bottom signature only.
+- Mobile smoke check script corrected to assert current Smart Focus wording.
+
 ## 2.54.57 (2026-02-20)
 - Mobile quote dialog visual refactor (show-first):
   - Added dedicated reading view block (`quoteReadEn/quoteReadCn`) as default.
