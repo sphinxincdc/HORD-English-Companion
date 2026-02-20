@@ -1,3 +1,96 @@
+## 2.54.53 (2026-02-20)
+- Mobile quote dialog keyboard hardening (iOS/Safari):
+  - Added strict view-mode guard to prevent keyboard popup unless `编辑` is explicitly enabled.
+  - Added focus/pointer/touch interception on quote fields in view mode.
+  - Added `enforceQuoteViewNoKeyboard()` fallback after opening/cancel-edit.
+
+## 2.54.52 (2026-02-20)
+- Mojibake/garbled text fix:
+  - Fixed mobile review low-frequency action label (`删除本词`) rendering issue.
+  - Fixed iPhone export hint text in quote export toast to proper Chinese.
+- Translation popup:
+  - Retained previous `translateResultCount` behavior fix (web popup now follows configured result count).
+- Mobile review:
+  - Retained previous default/persisted session-size fix (`default 20`, custom value persists).
+
+## 2.54.51 (2026-02-20)
+- Popup translation result count:
+  - Web popup now strictly follows configured result count (`translateResultCount`) instead of hardcoded 2.
+  - `content.js` now reads `resultLimit` from background response and slices translation cards accordingly.
+- Mobile review session size:
+  - Added persistent session-size setting (`hord_mobile_review_limit_v1`) with default fallback = 20.
+  - Review count input now sanitizes/persists on `change/blur/Enter`.
+  - Start review always uses persisted value and writes back normalized value.
+
+## 2.54.50 (2026-02-20)
+- Translation reliability (non-YouTube):
+  - `fallback_google` is now always appended as final provider in enabled order normalization.
+  - Added emergency final fallback call in `translatePipeline` to reduce empty popup cases when selected providers all fail.
+  - Added clear Gemini panel note in options: `429/403` will auto-degrade and not block popup translation.
+- Mobile top-bar polish:
+  - Reserved right-side space in top header and tuned theme toggle style/position for better visual integration.
+
+## 2.54.49 (2026-02-20)
+- Options quick recovery:
+  - Added `修复弹窗配置` action to reset popup blockers in one click:
+    - `global_disable = false`
+    - `blacklist_domain = []`
+    - `blacklist_page = []`
+- Options compact UX:
+  - Added persistent compact/full view toggle in top nav (`⚡ 简版视图` / `🧩 完整视图`).
+  - Compact view hides low-frequency Step 1/2 cards and keeps high-frequency Step 3 focused.
+
+## 2.54.48 (2026-02-20)
+- Options UX and performance:
+  - Added `简版视图 / 完整视图` toggle on top nav (`toggleCompactView`).
+  - Default to compact view (focus on Step 3 high-frequency operations), with Step 1/2 hidden until expanded.
+  - Added compact state persistence via localStorage (`options_compact_view_v1`).
+  - Reduced provider panel jank by debouncing high-frequency list re-renders.
+- Mobile stability follow-up:
+  - Continued hardening for UTF-8/mobile consistency from previous patch with passing smoke checks.
+
+## 2.54.47 (2026-02-20)
+- Mobile encoding and icon chain hardening:
+  - Rebuilt `mobile.html` to valid UTF-8 and fixed broken static labels/tags.
+  - Rebuilt `mobile.webmanifest` to valid UTF-8 JSON with stable iOS/Android icon declarations.
+  - Updated Apple touch icon and manifest cache-busting query to `2.54.47`.
+- Mobile quote dialog keyboard guard strengthened:
+  - In default view mode, quote fields are now `readonly + disabled + tabindex=-1 + pointer-events:none`.
+  - Keyboard appears only after pressing `编辑`.
+- Options page performance tune:
+  - Added debounced provider list rendering (`scheduleRenderProviderOrderList`).
+  - Replaced high-frequency immediate re-render on filters/config edits with scheduled updates.
+
+## 2.54.46 (2026-02-19)
+- Review session size: restored default to 20 and removed Laser hard clamp in both mobile review (`mobile.js`) and desktop test page (`test.js`). Custom session size now works normally.
+- Review scoring durability: desktop review now persists `OP_RATE_WORD` before advancing, so unfinished sessions still count to backend stats immediately.
+- Review pronunciation UX:
+  - Mobile review card now shows US/UK phonetics with `🔰 US` / `🔰 UK` play buttons.
+  - Desktop review card now adds US/UK play buttons with audio URL first, `speechSynthesis` fallback.
+- Popup trigger hygiene:
+  - Word-mode phrase threshold changed to <= 3 words.
+  - URL/domain/email-like selections no longer trigger popup.
+- Mobile web delivery:
+  - Added `scripts/watch_mobile_publish.ps1` for auto build/sync/commit/push to site repo.
+  - Added npm script `watch:mobile-web:push`.
+
+## 2.54.45 (2026-02-19)
+- Mobile quote dialog: hardened default view mode (readonly + inputmode=none), added iOS keyboard guard (blur active element on open, keep focus on dialog container until Edit).
+- Mobile theme control: fixed floating top-right control anchoring with safe-area right alignment.
+- Popup diagnostics: added in-page diagnostics panel (Alt+Shift+D), trigger logs, and one-click reset for popup disable/blacklist config.
+- Popup stability guard: narrowed trigger blocking to unsafe contexts only and added immediate selection snapshot trigger path on mouseup/dblclick.
+
+## 2.54.44 (2026-02-19)
+- Mobile icon chain hardening: added iOS apple-touch-icon sizes (180/167/152/120) and cache-busting query in mobile.html.
+- Mobile web manifest normalized to UTF-8 and corrected localized metadata/icons for stable Add-to-Home-Screen behavior on iOS.
+- Added generated icon assets: icon-180.png, icon-167.png, icon-152.png, icon-120.png.
+
+## 2.54.43 (2026-02-19)
+- Fix: selection/double-click popup reliability on web pages. Popup trigger now snapshots selection immediately and only blocks unsafe contexts (input/textarea/contenteditable, code/editor, sensitive form flow).
+- Fix: manual selection popup no longer gets suppressed by generic layout-container heuristics.
+- Fix: content build marker updated to 2.54.43-popupfix for field diagnostics.
+- Release: bumped extension version to 2.54.43.
+
 ## 2.53.70 (2026-02-03)
 - Rebrand: Unified product name to `HORD English Companion` across popup/manager/options/content/manifest and docs.
 - Rebrand: Unified slogan to `Yesterday, You Said Tomorrow` in UI and export brand copy.
@@ -524,3 +617,6 @@
 - Change: Pronunciation flag buttons (US/UK) in word list updated from dark pill to light badge style. Now uses #F4F6FA background, 12px border-radius, 6px 12px padding, subtle border and hover effect. No logic or storage changes.
 - Risk: Pure CSS change, no business logic affected. If any layout issues, revert manager.css to previous version.
 - Rollback: Restore manager.css from 2.51.0 and bump manifest version.
+
+
+
