@@ -1,3 +1,10 @@
+## 2.54.60 (2026-02-20)
+- Export default policy update (shared engine):
+  - `export-card.js` default `showSource` changed to `false`.
+  - New export defaults now consistently hide source by default across desktop/mobile flows unless explicitly enabled.
+- Mobile title consistency:
+  - `mobile.js` now sets document title from i18n brand title on load (`HORD 手机管理器 · HORD`).
+
 ## 2.54.59 (2026-02-20)
 - Mobile quote export polish:
   - Dialog export now uses the *current dialog content* (including unsaved edits in text/translation/note) instead of stale record values.
