@@ -1,3 +1,9 @@
+## 2.54.56 (2026-02-20)
+- Popup diagnostics panel removal:
+  - Removed inline diagnostics window trigger path from `content.js`.
+  - Removed `Alt+Shift+D` hotkey listener for diagnostics panel.
+  - Kept core popup behavior unchanged; only removed intrusive debug UI.
+
 ## 2.54.55 (2026-02-20)
 - Gemini reliability (quota protection):
   - Added automatic cooldown for Gemini after `429/403` to avoid repeated failing calls and popup latency spikes.

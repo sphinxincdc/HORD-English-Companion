@@ -74,42 +74,8 @@ async function __vb_resetPopupConfig(){
 }
 
 function __vb_openDiagPanel(){
-  try{
-    const id = 'vb-popup-diag-panel';
-    let panel = document.getElementById(id);
-    if(!panel){
-      panel = document.createElement('div');
-      panel.id = id;
-      panel.style.cssText = [
-        'position:fixed','right:12px','bottom:12px','z-index:2147483647',
-        'width:min(480px,92vw)','max-height:68vh','overflow:auto',
-        'background:#0b1022','color:#e8eeff','border:1px solid #33406f','border-radius:12px',
-        'box-shadow:0 20px 60px rgba(0,0,0,.35)','padding:10px','font:12px/1.45 ui-monospace,Consolas,monospace'
-      ].join(';');
-      panel.innerHTML = `
-        <div style="display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <b>HORD Popup Diagnostics</b>
-          <button id="vb-diag-close" style="border:1px solid #4a5a94;background:#172149;color:#fff;border-radius:8px;padding:4px 8px;cursor:pointer;">关闭</button>
-        </div>
-        <pre id="vb-diag-pre" style="white-space:pre-wrap;word-break:break-word;margin:0 0 8px;"></pre>
-        <div style="display:flex;gap:8px;justify-content:flex-end;">
-          <button id="vb-diag-reset" style="border:1px solid #7a2e44;background:#2b1020;color:#ffd7df;border-radius:8px;padding:6px 10px;cursor:pointer;">一键重置弹窗配置</button>
-        </div>
-      `;
-      document.documentElement.appendChild(panel);
-      panel.querySelector('#vb-diag-close')?.addEventListener('click', ()=> panel.remove());
-      panel.querySelector('#vb-diag-reset')?.addEventListener('click', async ()=>{
-        const ok = await __vb_resetPopupConfig();
-        const pre = panel.querySelector('#vb-diag-pre');
-        if(pre) pre.textContent = `${ok ? 'Reset OK' : 'Reset Failed'}\n\n` + pre.textContent;
-      });
-    }
-    const pre = panel.querySelector('#vb-diag-pre');
-    if(pre){
-      const snap = __vb_diagSnapshot();
-      pre.textContent = JSON.stringify(snap, null, 2) + '\n\nRecent logs:\n' + (__vb_diag.logs.join('\n') || '(empty)');
-    }
-  }catch(_){}
+  // Disabled: inline diagnostics panel removed by product decision.
+  return;
 }
 
 function __vb_toBool(v){
@@ -2324,16 +2290,14 @@ function __vb_triggerPopupFromEvent(e, force = false) {
   if (__vb_isHardBlockedContext(target)) {
     __vb_diag.blockedStreak += 1;
     __vb_diagLog('blocked_target', target?.tagName || 'unknown');
-    if (__vb_diag.blockedStreak >= 3) __vb_diagLog('hint', 'Press Alt+Shift+D to open diagnostics');
-    if (__vb_diag.blockedStreak === 5) __vb_openDiagPanel();
+    if (__vb_diag.blockedStreak >= 3) __vb_diagLog('hint', 'blocked context');
     return;
   }
   const activeEl = document.activeElement;
   if (__vb_isHardBlockedContext(activeEl)) {
     __vb_diag.blockedStreak += 1;
     __vb_diagLog('blocked_active', activeEl?.tagName || 'unknown');
-    if (__vb_diag.blockedStreak >= 3) __vb_diagLog('hint', 'Press Alt+Shift+D to open diagnostics');
-    if (__vb_diag.blockedStreak === 5) __vb_openDiagPanel();
+    if (__vb_diag.blockedStreak >= 3) __vb_diagLog('hint', 'blocked context');
     return;
   }
 
@@ -2344,8 +2308,7 @@ function __vb_triggerPopupFromEvent(e, force = false) {
   if (!__vb_shouldTrigger(text, force)) {
     __vb_diag.blockedStreak += 1;
     __vb_diagLog('blocked_text', String(text || '').slice(0, 64));
-    if (__vb_diag.blockedStreak >= 3) __vb_diagLog('hint', 'Press Alt+Shift+D to open diagnostics');
-    if (__vb_diag.blockedStreak === 5) __vb_openDiagPanel();
+    if (__vb_diag.blockedStreak >= 3) __vb_diagLog('hint', 'blocked text');
     // Some sites aggressively clear selection on dblclick/mouseup.
     // For dblclick (force), fall back to word-under-cursor to keep popup usable.
     if (!force) return;
@@ -2481,15 +2444,6 @@ document.addEventListener('mousemove', (e) => {
     const r = { left: e.clientX, top: e.clientY, right: e.clientX, bottom: e.clientY, width: 1, height: 1 };
     showResultBox(r, lw, 'hover');
   }, 90);
-}, true);
-
-document.addEventListener('keydown', (e) => {
-  try {
-    if (e.altKey && e.shiftKey && (e.key === 'D' || e.key === 'd')) {
-      e.preventDefault();
-      __vb_openDiagPanel();
-    }
-  } catch (_) {}
 }, true);
 
 // ---------------- Boot ----------------

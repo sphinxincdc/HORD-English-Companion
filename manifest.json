@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "HORD | 一键生词本 & 智能英语阅读伴侣",
-  "version": "2.54.55",
+  "version": "2.54.56",
   "description": "HORD\u970d\u5fb7\u82f1\u8bed\u5b66\u4e60\u7ba1\u5bb6\uff1a\u5212\u8bcd\u7ffb\u8bd1\u3001\u5355\u8bcd\u672c\u4e0e\u91d1\u53e5\u5e93\u3001\u827e\u5bbe\u6d69\u65af\u590d\u4e60\u3001\u793e\u5a92\u56fe\u7247\u4e0e\u58c1\u7eb8\u5bfc\u51fa\u3001\u672c\u5730\u8d44\u4ea7\u540c\u6b65\u3002",
   "permissions": [
     "storage",
@@ -66,5 +66,5 @@
     "48": "icon48.png",
     "128": "icon128.png"
   },
-  "version_name": "2.54.55"
+  "version_name": "2.54.56"
 }
