@@ -1,3 +1,9 @@
+## 2.54.55 (2026-02-20)
+- Gemini reliability (quota protection):
+  - Added automatic cooldown for Gemini after `429/403` to avoid repeated failing calls and popup latency spikes.
+  - Cooldown window: ~15 minutes in background worker memory.
+  - Added Options error mapping for `google_gemini_cooldown` with clear Chinese guidance.
+
 ## 2.54.54 (2026-02-20)
 - Popup trigger anti-noise hardening:
   - Added stricter URL/domain-like snippet filtering in `content.js` trigger gate.
